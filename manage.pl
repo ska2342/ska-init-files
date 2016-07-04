@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 #
 # File: manage.pl
-# Time-stamp: <2016-07-04 22:01:36 ska>
+# Time-stamp: <2016-07-04 22:32:10 ska>
 #
 # Copyright (C) 2016 by Stefan Kamphausen
 #
@@ -29,6 +29,7 @@ my $Version = "1.0";
 GetOptions(
            "install|i"  => \my $install,
            "collect|c"  => \my $collect,
+           "force|f"    => \my $force,
            "help|h!"    => \my $help,
            "longhelp!"  => \my $longhelp,
            "version|v!" => \my $version
