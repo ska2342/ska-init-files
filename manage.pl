@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 #
 # File: manage.pl
-# Time-stamp: <2016-07-04 22:32:10 ska>
+# Time-stamp: <2016-07-04 22:35:56 ska>
 #
 # Copyright (C) 2016 by Stefan Kamphausen
 #
@@ -90,11 +90,17 @@ exit;
 sub run_install {
     for my $repo (keys %files) {
         my $real = "$home/$files{$repo}";
-        if ( -f $real && !$force) {
+        if ( -f $real && $force) {
+            print "Updating: \"$repo\" --> \"$real\"\n";
+        } elsif (! -f $real) {
             print "Installing: \"$repo\" --> \"$real\"\n";
-            copy($repo, $real) or die
-              "Could not copy \"$repo\" to \"$real\": $!";
+        } else {
+            print "Skipping \"$repo\"\n";
+            next;
         }
+        copy($repo, $real) or die
+          "Could not copy \"$repo\" to \"$real\": $!";
+
     }
 }
 sub run_collect {
