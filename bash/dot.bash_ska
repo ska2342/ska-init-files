@@ -1,0 +1,65 @@
+# -*- mode: shell-script -*-
+
+# Based upon some .bashrc I once found on a Linux system.  Probably
+# Debian-based.  Can not tell anymore.
+
+# Just add a line to your .bashrc to source it
+# test -f $HOME/.bash_ska.sh && . $HOME/.bash_ska.sh
+
+
+######################################################################
+# ska
+######################################################################
+
+HISTCONTROL=ignoreboth
+shopt -s histappend
+HISTSIZE=100000
+HISTFILESIZE=200000
+
+
+# copy and paste save prompt
+PS1="#$PS1"
+
+function is_in_path {
+    local needle="${1%/}"
+    local haystack=$(echo $PATH | perl -n -e "print(join(' ', split(/:/,$_)))")
+    for h in $haystack; do
+	if [ "$needle" == "$h" ]; then 
+	    return 0
+	fi
+    done
+    return 1
+}
+
+function add_to_path {
+    local newp="${1%/}";
+    if [ -z $newp ]; then
+	echo "Warning: not adding anything to path"
+	return
+    fi
+    if [ ! -d "$newp" ]; then
+	echo "Warning: not adding non-directory \"$newp\" to path"
+	return
+    fi
+
+    is_in_path "$newp" || PATH=$newp:$PATH
+}
+
+add_to_path "$HOME/local/bin"
+
+
+# cdargs
+if [ -f /usr/share/doc/cdargs/examples/cdargs-bash.sh ]; then
+	. /usr/share/doc/cdargs/examples/cdargs-bash.sh
+fi
+
+# Less
+export LESS=" -M -i -S -R"
+
+# use termcap to make manpages colored
+test -f ~/.color-man && . ~/.color-man
+
+# load aliases for remote connections
+if [ -f ~/.remote-connections ]; then
+    . ~/.remote-connections
+fi
