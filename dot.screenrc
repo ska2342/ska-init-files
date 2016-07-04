@@ -1,0 +1,31 @@
+#kill screen's startup message
+startup_message off
+
+# define a bigger scrollback, default is 100 lines
+defscrollback 9999
+
+# An alternative hardstatus to display a bar at the bottom listing the
+# window names and highlighting the current window name in blue.
+hardstatus on
+hardstatus alwayslastline
+hardstatus string "%{.yw}%-w%{.Wk}%n %t%{-}%+w %=%{..G} %{..Y} %H"
+#hardstatus string  "%-Lw%{= BW}%50>%n%f* %t%{-}%+Lw%<"
+
+#shelltitle ":|bash"
+
+
+# Execute .bash_profile on startup
+# shell -$SHELL
+
+escape ^oo
+
+# ------------------------------------------------------------------------------
+# STARTUP SCREENS
+# ------------------------------------------------------------------------------
+
+# screen bash
+# screen -t irc 1 emacs -nw --debug-init -f erc
+#screen 
+#screen -t top top
+#screen
+
