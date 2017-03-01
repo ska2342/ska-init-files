@@ -599,15 +599,6 @@ is to skip only the special buffers whose name begins with a space."
 ;; Keybinding in ska-ctrl-v-map below
 
 
-;; Editing my own Oddmuse Wikis
-(ska-init-message "  Oddmuse")
-(when (try-require 'oddmuse)
-  (oddmuse-mode-initialize)
-  (setq oddmuse-wikis 
-        '(("SkaChb" "http://www.skamphausen.de/cgi-bin/skachb" utf-8)
-          ("Zaphod" "http://zaphod/~ska/cgi-bin/skawiki" utf-8)
-          ("Maelstrom" "http://zaphod/~ska/cgi-bin/teamwiki" utf-8))))
-
 ;; We always need footnotes
 (ska-init-message "   Footnotes")
 (try-require 'footnote)
