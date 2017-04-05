@@ -2,6 +2,7 @@
 ;; $Id: $
 ;; Copyright (C) 2003 by Stefan Kamphausen
 ;; Author: Stefan Kamphausen <mail@skamphausen.de>
+;; Version: 2.0
 ;; Created: Winter 2002
 ;; Keywords: bookmarks, navigation, tools, extensions, user
 
@@ -165,6 +166,8 @@ find good settings for many people."
   :type 'boolean
   :group 'mtorus)
 
+;; FIXME echo not implemented
+;; Just remove this
 (defcustom mtorus-notify-method 't
   "*Controls how the status is displayed to the user.
 If set to 't' mtorus uses a popup window and the echo erea.
@@ -207,9 +210,11 @@ This is an ALPHA feature."
 (defcustom mtorus-notify-popup-clear-timeout 4
   "*Time in seconds before the pop up window is removed."
   :type 'number
+  ;; should that be mtorus-notify group?
   :group 'mtorus-pop-up)
 
-(defcustom mtorus-notify-popup-separator " - "
+;; FIXME not used, could a slash work well?
+(defcustom mtorus-notify-popup-separator "/"
   "String appearing between two entries in pop up window."
   :type 'string
   :group 'mtorus-pop-up)
@@ -230,7 +235,6 @@ but I like it and I provide it only as a convenience function.
 
 Special care for CUA users is taken."
   (interactive)
-  (message "installed")
   (cond
    ((featurep 'cua) ;; FIXME how to detect?
     (global-set-key '[(f10)] 'mtorus-next-marker)
@@ -244,19 +248,13 @@ Special care for CUA users is taken."
     (global-set-key '[(shift down)]  'mtorus-prev-ring)))
    
    ;; ring handling: f11
-   (global-set-key '[(f11)]
-     'mtorus-new-ring)
-   (global-set-key '[(shift f11)]
-     'mtorus-delete-ring)
-   (global-set-key '[(control f11)]
-    'mtorus-notify)
+   (global-set-key '[(f11)]         'mtorus-new-ring)
+   (global-set-key '[(shift f11)]   'mtorus-delete-ring)
+   (global-set-key '[(control f11)] 'mtorus-notify)
    ;; marker handling: f12
-   (global-set-key '[(f12)]
-     'mtorus-new-marker)
-   (global-set-key '[(shift f12)]
-     'mtorus-delete-current-marker)
-   (global-set-key '[(control f12)]
-     'mtorus-update-current-marker))
+   (global-set-key '[(f12)]         'mtorus-new-marker)
+   (global-set-key '[(shift f12)]   'mtorus-delete-current-marker)
+   (global-set-key '[(control f12)] 'mtorus-update-current-marker))
 
 ;;;;;;;;;;;;;;;;;;;
 ;; MTorus internals
@@ -267,6 +265,7 @@ Special care for CUA users is taken."
 is to skip only the special buffers whose name begins with a space."
   (string-match "[ ]+" (buffer-name buffer)))
 
+;; FIXME MUST begin with * (special)
 (defcustom mtorus-buffer-list-name "*buffer-list*"
   "The name of the ring that always contains all open buffers.
 Cycling within this ring is different from cycling the others since it
@@ -294,6 +293,7 @@ altering the contents of the buffer.")
 ;;; Compatibilty:
 ;; This code was written in and for XEmacs but I hope that these lines
 ;; make a good and working GNU compatibility
+;; FIXME: Just remove it
 (if (featurep 'xemacs)
     (progn ;; XEmacs code:
       (defun mtorus-message (msg)
@@ -326,6 +326,7 @@ altering the contents of the buffer.")
        (defmacro mtorus-point-at-eol ()
      (save-excursion (end-of-line) (point)))))
 
+;; FIXME Take a look at Emacs' testing facilities
 ;; Testing function
 ;(defun tt ()
 ;  ""
@@ -372,6 +373,7 @@ It won't create a ring with a name that already exists."
       (setq mtorus-torus
             (append mtorus-torus
                     (list ring))))
+    ;; FIXME make customizable if auto switch to new rings
     (mtorus-switch-to-ring ring-name t)))
 
 (defun mtorus-delete-ring (&optional ring-name)
@@ -395,7 +397,9 @@ If none is given it is asked from the user."
     (if (not (mtorus-special-ringp rname))
         (setcar (assoc rname mtorus-torus) nname)
       (mtorus-message "can't rename special rings"))))
-      
+
+;; This is not particularly elegant and could cause unnessary rotation
+;; of rings
 (defun mtorus-switch-to-ring (ring-name &optional quiet)
   "Make RING-NAME the current ring."
   (while (not (mtorus-current-ringp ring-name))
@@ -577,16 +581,16 @@ the default ring.  It skips buffers for that
   "Helper function for a grep over a list.
 Apply predicate PREDICATE to all elements of list L and return a list
 consisting of all elements PREDICATE returned t for."
-  (defun helper (ret-list rest)
-    (if (null rest)
-        (reverse ret-list)
-      (progn
-        (if (funcall predicate (car rest))
-            (setq ret-list (cons (car rest) ret-list)))
-        (helper ret-list (cdr rest)))))
-  (helper '() l))
+  (flet ((helper (ret-list rest)
+                 (if (null rest)
+                     (reverse ret-list)
+                   (progn
+                     (if (funcall predicate (car rest))
+                         (setq ret-list (cons (car rest) ret-list)))
+                     (helper ret-list (cdr rest))))))
+    (helper '() l)))
 
-;; GUI
+;;; GUI
 ;; Code and idea highly inspired by swbuff.el by D. Ponce. Thanks!
 (defvar mtorus-notify-status-freeze nil
   "A temporary freezed description of the current torus.
@@ -628,7 +632,7 @@ entries to avoid repeated calls."
                  (mapcar #'(lambda (buf)
                              (with-current-buffer buf
                                (mtorus-entry-to-string
-								;; FIXME: good enough for GC?
+                                ;; FIXME: good enough for GC?
                                 (point-marker))))
                          (mtorus-buffer-list))))
              (mapcar #'(lambda (marker)
@@ -662,33 +666,45 @@ or if `mtorus-notify-popup-clear-timeout' seconds go by."
                #'mtorus-notify-maybe-cleanup))))))
 
 (defface mtorus-highlight-face
-  '((((class color) (background light))
-     (:background "khaki"))
-    (((class color) (background dark))
-     (:background "sea green"))
-    (((class grayscale monochrome)
-      (background light))
-     (:background "black"))
-    (((class grayscale monochrome)
-      (background dark))
-     (:background "white")))
+  '((t (:inherit highlight)))
   "Face for the highlighting of the line jumped to."
   :group 'mtorus)
-(setq frame-background-mode 'light)
+
+;; (defface mtorus-highlight-face
+;;   '((((class color) (background light))
+;;      (:background "khaki"))
+;;     (((class color) (background dark))
+;;      (:background "sea green"))
+;;     (((class grayscale monochrome)
+;;       (background light))
+;;      (:background "black"))
+;;     (((class grayscale monochrome)
+;;       (background dark))
+;;      (:background "white")))
+;;   "Face for the highlighting of the line jumped to."
+;;   :group 'mtorus)
+
+;; Wow this is severely broken!
+;;(setq frame-background-mode 'light)
 
 (defface mtorus-notify-highlight-face
-  '((((class color) (background light))
-     (:foreground "red"))
-    (((class color) (background dark))
-     (:foreground "green"))
-    (((class grayscale monochrome)
-      (background light))
-     (:foreground "black"))
-    (((class grayscale monochrome)
-      (background dark))
-     (:background "white")))
+  '((t (:inherit highlight)))
   "Face for the highlighting the current entry in the notify window."
   :group 'mtorus)
+
+;; (defface mtorus-notify-highlight-face
+;;   '((((class color) (background light))
+;;      (:foreground "red"))
+;;     (((class color) (background dark))
+;;      (:foreground "green"))
+;;     (((class grayscale monochrome)
+;;       (background light))
+;;      (:foreground "black"))
+;;     (((class grayscale monochrome)
+;;       (background dark))
+;;      (:background "white")))
+;;   "Face for the highlighting the current entry in the notify window."
+;;   :group 'mtorus)
   
 
 (defun mtorus-insert-status (currentry-s)
@@ -710,7 +726,7 @@ names plus the contents of the current ring."
           (insert "\n")
           (mtorus-insert-ring-description currentry-s
            (cadr (assoc entry mtorus-notify-status-freeze)))))
-        (insert " ")
+        (insert mtorus-notify-popup-separator)
       )))
 
 (defun mtorus-insert-ring-description (curr entries)
@@ -727,7 +743,7 @@ all the current entries."
      (when (string-equal entry curr)
        (set-text-properties
         start (point) '(face mtorus-notify-highlight-face)))
-     (insert "  "))))
+     (insert mtorus-notify-popup-separator))))
    
    
 ;; Used to prevent discarding the notify window on some mouse event.
@@ -762,7 +778,7 @@ to the cycling commands."
   "Show the line you jumped to by highlighting it."
   (setq mtorus-highlight-extent
         (mtorus-make-extent (mtorus-point-at-bol)
-                            (mtorus-point-at-eol)))
+                            (+ 1 (mtorus-point-at-eol))))
   (mtorus-set-extent-face mtorus-highlight-extent
                           'mtorus-highlight-face)
   (add-hook 'pre-command-hook
@@ -792,6 +808,7 @@ Takes care of special ring names"
     (t
      ()))))
 
+;; FIXME must not allow names beginning with * (special)
 (defun mtorus-ask-ring ()
   "Ask the user to choose a ring (with completion)."
   (let ((default (mtorus-current-ring-name)))
@@ -826,10 +843,12 @@ Takes care of special ring names"
 For the current entry NTH is 0 and for the last NTH is length -1."
   (car (elt mtorus-torus (% nth (length mtorus-torus)))))
 
+;; FIXME not used
 (defun mtorus-ring-names ()
   "Return a list of all available ring names as strings."
   (mapcar 'car mtorus-torus))
 
+;; FIXME not used
 (defun mtorus-current-ring ()
   "Return the current ring as a list.
 The current ring is always the CDR of the 0th in the list."
@@ -862,7 +881,7 @@ The current ring is always the CDR of the 0th in the list."
 (defun mtorus-current-marker ()
   "Return the current marker in the current ring."
   (if (mtorus-special-ringp (mtorus-current-ring-name))
-	  ;; FIXME: good enough for GC?
+          ;; FIXME: good enough for GC?
       (point-marker)
     (first (second (first mtorus-torus)))))
 
@@ -896,8 +915,10 @@ By convention special ring names begin with a '*'."
   (when (and mtorus-save-on-exit
              (not (memq 'mtorus-quit kill-emacs-hook)))
     (add-hook 'kill-emacs-hook
+              ;; FIXME fn does not exist
               'mtorus-quit)))
 
 (provide 'mtorus)
 
-;;; newtorus.el ends here
+;;; mtorus.el ends here
+

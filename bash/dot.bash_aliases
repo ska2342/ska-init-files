@@ -145,6 +145,7 @@ function ff () {
     fi
     find $path -iname "$name" -not -path '*.git*' -not -path '*.svn*'
 }
+alias ffg='ff | g'
 
 # screen
 alias sw='screen -wipe'

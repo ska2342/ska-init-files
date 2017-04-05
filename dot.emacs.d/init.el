@@ -10,7 +10,7 @@
 ;; ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 ;; or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
 ;; License for more details.
-;;
+;;100 731 439 3
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program; see the file COPYING.  If not, write to the
 ;; Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -42,20 +42,15 @@
              nil))))
 
 (ska-init-message "Start of init.el")
-
 (when window-system
-  ;; enable wheelmouse support by default
-  (mwheel-install)
   ;; use extended compound-text coding for X clipboard
   (set-selection-coding-system 'compound-text-with-extensions))
 
 ;; package
 (setq package-enable-at-startup nil)
 (require 'package)
-;; (add-to-list 'package-archives
-;;              '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (add-to-list 'package-archives
-  '("melpa" . "http://melpa.milkbox.net/packages/") t)
+  '("melpa" . "http://melpa.org/packages/") t)
 
 ;; package usually loads packages after init.el; this breaks my way of
 ;; configuring things here.  See
@@ -68,7 +63,6 @@
      (append
       (list
        "~/.emacs.d/lisp"
-; install from package       "~/local/opt/helm"
        "~/local/opt/cider"
        "~/local/opt/clojure-mode"
        "~/local/opt/smartparens/"
@@ -76,16 +70,16 @@
        )
       load-path))
 
+;; since ubunut 16.04 exec-path does not contain my own dirs anymore.
+(add-to-list 'exec-path "~/local/bin")
+
 (setq custom-file "~/.emacs.d/custom.el")
 (when (file-exists-p custom-file)
   (load custom-file))
 
-
-;; Gentoo
-;(setq gentoo-site-file "/usr/share/emacs/site-lisp/site-gentoo")
-;(when (file-exists-p gentoo-site-file)
-;  (load gentoo-site-file))
-;; (try-require 'site-gentoo)
+(when (load-theme 'darktooth t)
+  (enable-theme 'darktooth)
+  (darktooth-modeline))
 
 ;; User Specific
 (setq ska-user-init-file "~/.emacs.d/user.el")
@@ -100,7 +94,6 @@
 (try-require 'cc-mode)
 (try-require 'cdargs)
 (try-require 'chb-util)
-(try-require 'highlight-context-line)
 (try-require 'll-debug)
 (try-require 'eldoc)
 (try-require 'apropos-toc)
@@ -108,17 +101,10 @@
 ;; Generic Configuration files (ini, properties...)
 (try-require 'conf-mode)
 
-;; since emacs 22 the greying out is default and I will try it..
-;;(try-require 'minibuf-electric-gnuemacs)
-;; since emacs 22 completion works on M-x load-library
-;;(try-require 'find-library)
-
-
-
 ;;;; =================================================================
 ;;;; DEFUNS
 
-;; functions
+;;; functions
 (ska-init-message "Defining functions")
 
 (defun ska-untabify ()
@@ -147,33 +133,6 @@ modes you want it to:
   (interactive)
   (switch-to-buffer-other-window "*Messages*")
   (goto-char (point-max)))
-
-(defun chb-home ()
-  (interactive)
-  (if (not (bolp))
-      (beginning-of-line)
-    (if (eq this-command last-command)
-        (cond
-         ((not (= (point) (window-start)))
-          (move-to-window-line 0)
-          (beginning-of-line))
-         (t
-          (goto-char (point-min)))))))
-
-(defun chb-end ()
-  (interactive)
-  (if (not (eolp))
-      (end-of-line)
-    (if (eq this-command last-command)
-        (cond
-         ((not (= (point) (save-excursion
-                            (move-to-window-line -1)
-                            (end-of-line)
-                            (point))))
-          (move-to-window-line -1)
-          (end-of-line))
-         (t
-          (goto-char (point-max)))))))
 
 (defun ska-point-to-register()
   "Store cursorposition _fast_ in a register. Use ska-jump-to-register
@@ -253,7 +212,6 @@ goes back one char itself."
              (forward-char))
     (transpose-chars -1)))
 
-
 (defun insert-iso-time ()
   (interactive)
   (insert (format-time-string "%Y-%m-%d")))
@@ -261,7 +219,6 @@ goes back one char itself."
 (defun ska-toggle-long-lines ()
   (interactive)
   (setq truncate-lines (not truncate-lines)))
-
 
 
 (defun ska-coding-keys (map)
@@ -286,6 +243,50 @@ languages. Argument MAP is the local keymap (e.g. cperl-mode-map)."
 ;; Company
 (when (try-require 'company)
   (add-hook 'after-init-hook 'global-company-mode))
+
+;; Highlight Context Line (my own)
+(ska-init-message "   Highlight Context Line")
+(when (try-require 'highlight-context-line)
+  (highlight-context-line-mode 1))
+
+;; Home and End
+(ska-init-message "   Home/End")
+(if (try-require 'home-end)
+    (progn
+      (global-set-key '[(home)] 'home-end-home)
+      (global-set-key '[(end)] 'home-end-end))
+  ;; else fall back to this impl
+  (ska-init-message "emacs goodies not installed")
+  (defun chb-home ()
+    (interactive)
+    (if (not (bolp))
+        (beginning-of-line)
+      (if (eq this-command last-command)
+          (cond
+           ((not (= (point) (window-start)))
+            (move-to-window-line 0)
+            (beginning-of-line))
+           (t
+            (goto-char (point-min)))))))
+  
+  (defun chb-end ()
+    (interactive)
+    (if (not (eolp))
+        (end-of-line)
+      (if (eq this-command last-command)
+          (cond
+           ((not (= (point) (save-excursion
+                              (move-to-window-line -1)
+                              (end-of-line)
+                              (point))))
+            (move-to-window-line -1)
+            (end-of-line))
+           (t
+            (goto-char (point-max)))))))
+  (global-set-key '[(home)] 'chb-home)
+  (global-set-key '[(end)] 'chb-end))
+  
+
 
 
 ;; Recent Files
@@ -339,7 +340,6 @@ file to write to."
 
 
   (recentf-mode 1))
-;;  (recentf-mode 1))
 
 ;; MTorus
 (ska-init-message "   MTorus")
@@ -406,29 +406,13 @@ is to skip only the special buffers whose name begins with a space."
 
 
 (ska-init-message "   Ispell")
-(setq ispell-program-name "aspell")
+(setq ispell-program-name "hunspell")
 
 (ska-init-message "   Flyspell")
 (require 'flyspell)
 (define-key flyspell-mode-map '[(control \.)] 'ska-point-to-register)
 (define-key flyspell-mode-map '[(control \,)] 'ska-jump-to-register)
 
-
-;; (ska-init-message "   Anything")
-;; (when (try-require 'anything-config)
-;;   (defun ska-anything ()
-;;     (interactive)
-;;     (anything-other-buffer
-;;      '(anything-c-source-buffers+
-;;        anything-c-source-file-name-history
-;;        anything-c-source-recentf
-;;        anything-c-source-files-in-current-dir+
-;;        anything-c-source-locate
-;;        anything-c-source-man-pages
-;;        anything-c-source-emacs-commands)
-;;      " *ska-anything*"))
-  
-;;   nil)
 
 ;; Helm, heir of anything
 (ska-init-message "   Helm")
@@ -608,7 +592,6 @@ is to skip only the special buffers whose name begins with a space."
 ;; (when (try-require 'highline)
 ;;   (global-highline-mode))
 
-
 ;; Magit
 (ska-init-message "   Magit")
 (when (try-require 'magit)
@@ -698,7 +681,8 @@ is to skip only the special buffers whose name begins with a space."
     (add-hook 'write-contents-hooks #'ska-untabify
               nil t)))
 
-(add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
+(add-hook 'after-save-hook
+          'executable-make-buffer-file-executable-if-script-p)
 
 ;; Text
 (ska-init-message "  Text Mode")
@@ -713,6 +697,8 @@ is to skip only the special buffers whose name begins with a space."
 (add-hook 'emacs-lisp-mode-hook
           #'(lambda ()
               (prog-modes-common-hook-function)
+              (key-chord-define-local "jj" "(")
+              (key-chord-define-local "kk" ")")
               (turn-on-eldoc-mode)))
 
 
@@ -1608,10 +1594,12 @@ This relies on a certain structure of the code."
   (add-to-list 'magic-mode-alist '(".* boot" . clojure-mode))
 
   (setq nrepl-hide-special-buffers t)
+  (setq cider-use-tooltips nil) ; breaks mouse selection for me
   (setq cider-repl-tab-command 'indent-for-tab-command)
   (setq cider-repl-history-file "~/.emacs.d/cider-history.eld")
   (setq cider-auto-select-error-buffer t)
   (setq cider-repl-display-help-banner nil)
+  (setq cider-mode-line-show-connection nil)
   (try-require 'company)
 
   (add-hook 'clojure-mode-hook
@@ -1946,6 +1934,7 @@ This relies on a certain structure of the code."
 (put 'narrow-to-region 'disabled nil)
 (put 'erase-buffer 'disabled nil)
 (put 'scroll-left 'disabled nil)
+(put 'upcase-region 'disabled nil)
 ;;;; =================================================================
 ;;;; KEYS
 
@@ -1966,7 +1955,6 @@ This relies on a certain structure of the code."
 (define-key ska-ctrl-v-map '[(control s)] 'svn-status)
 (define-key ska-ctrl-v-map '[(control t)] 'fdlcap-change-case-current-word)
 (define-key ska-ctrl-v-map '[(control v)] 'll-debug-toggle-comment-region-or-line)
-;(define-key ska-ctrl-v-map '[(control x)] 'ska-anything)
 (define-key ska-ctrl-v-map '[(control y)] 'ska-insert-x-selection)
 
 (global-set-key '[(control z)]            'yank)
@@ -2013,12 +2001,9 @@ This relies on a certain structure of the code."
 (global-set-key '[f9]                     'repeat-complex-command)
 ;;(global-set-key '[(control f9)]            ')
 (global-set-key (kbd "S-SPC")             'dabbrev-expand)
-;(global-set-key (kbd "C-S-SPC")           'helm-mini)
-(global-set-key '[(shift iso-lefttab)]    'comint-dynamic-complete)
-(global-set-key '[(backtab)]              'comint-dynamic-complete)
+(global-set-key '[(shift iso-lefttab)]    'completion-at-point)
+(global-set-key '[(backtab)]              'completion-at-point)
 (global-set-key '[(meta k)]               'ska-kill-entire-line)
-(global-set-key '[(home)]                 'chb-home)
-(global-set-key '[(end)]                  'chb-end)
 
 ;; some xemacs defaults:
 (global-set-key (kbd "<M-left>") #'backward-sexp)
@@ -2027,23 +2012,8 @@ This relies on a certain structure of the code."
 
 (global-set-key (kbd "C-h a") #'apropos)
 
-
 (global-set-key [delete] 'delete-char)
 (global-set-key [kp-delete] 'delete-char)
-
-;; Default seince Emacs 22
-;; (global-set-key (kbd "C-M-<SPC>")
-;;                 #'(lambda ()
-;;                     (interactive)
-;;                     (if (not (and transient-mark-mode mark-active))
-;;                         (mark-sexp)
-;;                       (let ((oldpoint (point)))
-;;                         (goto-char (mark t))
-;;                         (set-mark (save-excursion
-;;                                     (forward-sexp 1)
-;;                                     (point)))
-;;                         (goto-char oldpoint)))))
-
 
 ;; taken from http://jaderholm.com/configs/emacs will give it a try
 ;; run occur with M-o when in C-s 
@@ -2129,4 +2099,4 @@ This function ...
 ;;;; More variables
 
 (ska-init-message "End of init.el")
-(put 'upcase-region 'disabled nil)
+

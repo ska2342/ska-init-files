@@ -13,9 +13,10 @@
 
 HISTCONTROL=ignoreboth
 shopt -s histappend
-HISTSIZE=100000
+HISTSIZE=200000
 HISTFILESIZE=200000
 
+umask 0022
 
 # copy and paste save prompt
 PS1="#$PS1"
