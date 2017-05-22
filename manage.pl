@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 #
 # File: manage.pl
-# Time-stamp: <2017-04-05 10:11:22 ska>
+# Time-stamp: <2017-04-20 16:23:45 ska>
 #
 # Copyright (C) 2016 by Stefan Kamphausen
 #
@@ -58,15 +58,15 @@ if ($version) {
 ######################################################################
 # all values are relative to $HOME!
 my %files =
-  ("dot.emacs.d/init.el" => ".emacs.d/init.el",
-   "dot.emacs.d/lisp/chb-util.el" => ".emacs.d/lisp/chb-util.el",
+  ("dot.emacs.d/init.el"             => ".emacs.d/init.el",
+   "dot.emacs.d/lisp/chb-util.el"    => ".emacs.d/lisp/chb-util.el",
    "dot.emacs.d/lisp/active-menu.el" => ".emacs.d/lisp/chb-util.el",
    "dot.emacs.d/lisp/linmag-mode.el" => ".emacs.d/lisp/linmag-mode.el",
-   "dot.emacs.d/lisp/mtorus.el" => ".emacs.d/lisp/mtorus.el",
-   "bash/dot.bash_ska" => ".bash_ska",
-   "bash/dot.bash_aliases" => ".bash_aliases",
-   "bash/dot.color-man" => ".color-man",
-   "dot.screenrc" => ".screenrc"
+   "dot.emacs.d/lisp/mtorus.el"      => ".emacs.d/lisp/mtorus.el",
+   "bash/dot.bash_ska"               => ".bash_ska",
+   "bash/dot.bash_aliases"           => ".bash_aliases",
+   "bash/dot.color-man"              => ".color-man",
+   "dot.screenrc"                    => ".screenrc"
   );
 my $home = $ENV{HOME};
 
