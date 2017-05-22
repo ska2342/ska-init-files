@@ -64,3 +64,8 @@ test -f ~/.color-man && . ~/.color-man
 if [ -f ~/.remote-connections ]; then
     . ~/.remote-connections
 fi
+# load aliases for remote connections
+if [ -f ~/.local_bash_aliases ]; then
+    . ~/.local_bash_aliases
+fi
+

@@ -26,28 +26,6 @@ function cam-me {
   cvlc -f v4l2:///dev/video0
 }
 
-function zd {
-    if  ! mountpoint /mnt/rava/public/; then
-	echo "Mounting rava..."
-	mount /mnt/rava/public
-    fi
-    cd /mnt/rava/public/Zendesk_current/
-    if [ -z $1 ]; then
-	echo "111"
-	ls -ltr | tail -n 10
-    else
-	ls -ltrd "*$1*"
-    fi
-}
-
-# LDAP Lookups
-# function vorname () {
-# ldapsearch -x  -h mailman -b 'o=Bernigshausen & Neben oHG' "givenname=$1"
-# }
-# function nachname () {
-# ldapsearch -x  -h mailman -b 'o=Bernigshausen & Neben oHG' "sn=$1"
-# }
-
 # Variations on a Theme called ls:
 alias ls='ls -hF --color=tty'
 alias l='ls -l'
