@@ -36,6 +36,8 @@
 
 (ska-init-message "Start of init.el")
 
+(add-to-list 'exec-path "~/local/bin")
+
 ;; Some manually maintained libraries. Most of them moved to
 ;; use-package and installation by (m)elpa in 2017.
 (setq load-path
@@ -562,8 +564,7 @@ is to skip only the special buffers whose name begins with a space . "
    ([(control shift right)] . windresize-select-right)
    ([(control shift up)]    . windresize-select-up)
    ([(control shift down)]  . windresize-select-down)
-   :map ska-ctrl-v-map
-   ([(control r)]           . windresize)))
+   ([(f8)] . windresize)))
 
 (use-package subword
   :ensure t)
@@ -609,10 +610,10 @@ is to skip only the special buffers whose name begins with a space . "
    ("JJ" . "[")
    (";B" . "{"))
   :config
-  (progn
-    (add-to-list 'auto-mode-alist '("\\ . boot$"  . clojure-mode))
-    (add-to-list 'magic-mode-alist '("  . * boot" . clojure-mode))
-    (subword-mode)))
+  (add-to-list 'auto-mode-alist '("\\.boot$"  . clojure-mode))
+  (add-to-list 'magic-mode-alist '(".* boot" . clojure-mode))
+  (add-hook 'clojure-mode-hook #'subword-mode)
+  (add-hook 'clojure-mode-hook #'auto-fill-mode))
 
 (use-package cider
   :ensure t
@@ -620,7 +621,7 @@ is to skip only the special buffers whose name begins with a space . "
   :init
   (setq cider-use-tooltips nil ; breaks mouse selection for me
         cider-repl-tab-command 'indent-for-tab-command
-        cider-repl-history-file "~/ . emacs.d/cider-history.eld"
+        cider-repl-history-file "~/.emacs.d/cider-history.eld"
         cider-auto-select-error-buffer t
         cider-repl-display-help-banner nil
         cider-mode-line-show-connection nil)
@@ -699,8 +700,8 @@ is to skip only the special buffers whose name begins with a space . "
 (use-package web-mode
   :ensure t
   :init
-  (add-to-list 'auto-mode-alist '("\\ . erb\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\ . html?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
   :config 
   (add-hook 'web-mode-hook
 	    (lambda ()
@@ -1114,7 +1115,7 @@ Argument MAP is c-mode-map or c++-mode-map."
 
 
 (defun ska-python-make-optparse ()
-  "Instrument the current python program to use optparse              . 
+  "Instrument the current python program to use optparse. 
 This relies on a certain structure of the code."
   (interactive)
   (save-excursion
@@ -1358,7 +1359,7 @@ This relies on a certain structure of the code."
   \n "######################################################################"
   \n "__END__\n"
   "######################################################################\n"
-  "##                             Now Docs         . ..\n"
+  "##                             Now Docs...\n"
   "######################################################################\n"
   "=head1 NAME"
   "\n"
@@ -1374,15 +1375,15 @@ This relies on a certain structure of the code."
   "\n\n"
   "=item B<-h, --help>"
   "\n\n"
-  "Print help message and exit successfully        . "
+  "Print help message and exit successfully."
   "\n\n"
   "=item B<--longhelp>"
   "\n\n"
-  "Print program documentation                     . "
+  "Print program documentation."
   "\n\n"
   "=item B<-v, --version>"
   "\n\n"
-  "Print version information and exit successfully . "
+  "Print version information and exit successfully."
   "\n\n"
   "=back"
   "\n\n"
