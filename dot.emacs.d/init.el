@@ -1391,7 +1391,7 @@ This relies on a certain structure of the code."
   "")
 
 (add-to-list 'auto-insert-alist
-             '(("\\ . pl$" . "Perl Program")
+             '(("\\.pl$" . "Perl Program")
                nil
                "#! /usr/bin/perl\n#\n"
                "# File: " (file-name-nondirectory buffer-file-name) "\n"
@@ -1416,7 +1416,7 @@ This relies on a certain structure of the code."
                  )))
 
 (add-to-list 'auto-insert-alist
-             '(("\\ . pm$" . "Perl Module")
+             '(("\\.pm$" . "Perl Module")
                nil
                "# File: " (file-name-nondirectory buffer-file-name) "\n"
                "# Time-stamp: <>\n"
