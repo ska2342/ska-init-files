@@ -215,6 +215,21 @@ that was stored with ska-point-to-register."
   (let ((tmp (point-marker)))
     (jump-to-register 8)
     (set-register 8 tmp)))
+;; Something new
+;; Should probably integrate transparently with ska-point-to-register.
+(defvar ska-point-stack)
+(defun ska-point-push ()
+  (interactive)
+  (push (point-marker) ska-point-stack))
+(defun ska-point-pop ()
+  (interactive)
+  (when ska-point-stack
+    (let* ((m (pop ska-point-stack))
+           (b (marker-buffer m)))
+      (switch-to-buffer b)
+      (goto-char m))))
+(global-set-key (kbd "C-:") #'ska-point-push)
+(global-set-key (kbd "C-;") #'ska-point-pop)
 
 (defun ska-insert-x-selection (arg)
   "Insert the current X selection at point.
@@ -447,8 +462,8 @@ is to skip only the special buffers whose name begins with a space . "
   (setq auto-insert-copyright my-copyright-holder)
 
   (add-hook 'find-file-hooks 
-            '(lambda ()
-               (auto-insert))))
+            (lambda ()
+              (auto-insert))))
 
 (use-package ispell
   :config
@@ -498,8 +513,8 @@ is to skip only the special buffers whose name begins with a space . "
 (use-package time-stamp
   :config
   (add-hook 'write-file-hooks 
-            '(lambda ()
-               (time-stamp))))
+            (lambda ()
+              (time-stamp))))
 
 (use-package executable
   :config
@@ -587,8 +602,8 @@ is to skip only the special buffers whose name begins with a space . "
   :ensure t
   :config
   (add-hook 'markdown-mode-hook
-          '(lambda ()
-             (auto-fill-mode 1))))
+          (lambda ()
+            (auto-fill-mode 1))))
 
 (use-package yaml-mode
   :ensure t)
@@ -692,7 +707,7 @@ is to skip only the special buffers whose name begins with a space . "
 (use-package html-mode
   :config
   (add-hook 'html-mode-hook
-          '(lambda ()
+            (lambda ()
              (auto-fill-mode 1)
              (setq fill-column 100))))
 
@@ -954,74 +969,74 @@ class name. This might still be somewhat buggy."
   "Set my personal keys for C and C++. 
 Argument MAP is c-mode-map or c++-mode-map."
   (message "Setting keys for common c mode.")
-  (define-key map '[(meta tab)]               'hippie-expand)
-  (define-key map '[(control b) (control a)]  'ska-edit-automake-file)
-  (define-key map '[(control b) (control b)]  'compile)
-  (define-key map '[(control b) (control m)]  'manual-entry)
+  (define-key map '[(meta tab)]               #'hippie-expand)
+  (define-key map '[(control b) (control a)]  #'ska-edit-automake-file)
+  (define-key map '[(control b) (control b)]  #'compile)
+  (define-key map '[(control b) (control m)]  #'manual-entry)
   ;; macros, templates, skeletons:
-  (define-key map '[(control b) (m) (f) (f)]  'ska-skel-c-fflush)
-  (define-key map '[(control b) (m) (f) (p)]  'ska-skel-c-fprintf)
-  (define-key map '[(control b) (m) (i)]      'ska-skel-c-include)
-  (define-key map '[(control b) (m) (m)]      'ska-skel-c-main)
-  (define-key map '[(control b) (m) (c)]      'ska-skel-c-comment)
-  (define-key map '[(control b) (m) (n)]      'ska-skel-c-printf-newline)
-  (define-key map '[(control b) (m) (p)]      'ska-skel-c-printf)
-  (define-key map '[(control b) (m) (P)]      'ska-skel-c-printf-flush)
-  (define-key map '[(control b) (m) (l) (w)]  'ska-skel-c-loop-while)
+  (define-key map '[(control b) (m) (f) (f)]  #'ska-skel-c-fflush)
+  (define-key map '[(control b) (m) (f) (p)]  #'ska-skel-c-fprintf)
+  (define-key map '[(control b) (m) (i)]      #'ska-skel-c-include)
+  (define-key map '[(control b) (m) (m)]      #'ska-skel-c-main)
+  (define-key map '[(control b) (m) (c)]      #'ska-skel-c-comment)
+  (define-key map '[(control b) (m) (n)]      #'ska-skel-c-printf-newline)
+  (define-key map '[(control b) (m) (p)]      #'ska-skel-c-printf)
+  (define-key map '[(control b) (m) (P)]      #'ska-skel-c-printf-flush)
+  (define-key map '[(control b) (m) (l) (w)]  #'ska-skel-c-loop-while)
   )
 
 (defun ska-c++-mode-keys ()
   "Set my personal keys for C++ mode."
-  (local-set-key '[(control b) (m) (c)]     'ska-skel-cc-class)
-  (local-set-key '[(control b) return]      'ska-skel-cc-endl)
-  (local-set-key '[(control b) (m) (l) (f)] 'ska-skel-cc-loop-for)
+  (local-set-key '[(control b) (m) (c)]     #'ska-skel-cc-class)
+  (local-set-key '[(control b) return]      #'ska-skel-cc-endl)
+  (local-set-key '[(control b) (m) (l) (f)] #'ska-skel-cc-loop-for)
   )
 (defun ska-c-mode-keys ()
   "Set my personal keys for plain C mode."
-  (local-set-key '[(control b) (m) (c)]     'ska-skel-c-comment)
-  (local-set-key '[(control b) return]      'ska-skel-cc-endl)
-  (local-set-key '[(control b) (m) (l) (f)] 'ska-skel-c-loop-for)
+  (local-set-key '[(control b) (m) (c)]     #'ska-skel-c-comment)
+  (local-set-key '[(control b) return]      #'ska-skel-cc-endl)
+  (local-set-key '[(control b) (m) (l) (f)] #'ska-skel-c-loop-for)
   )
 
 (add-hook 'c++-mode-hook
-          '(lambda ()
-             ;; my keybindings
-             (ska-c-common-mode-keys c++-mode-map)
-             (ska-c++-mode-keys)
-             ))
+          (lambda ()
+            ;; my keybindings
+            (ska-c-common-mode-keys c++-mode-map)
+            (ska-c++-mode-keys)
+            ))
 
 (add-hook 'c-mode-hook
-          '(lambda ()
-             ;; my keybindings
-             (ska-c-common-mode-keys c-mode-map)
-             (ska-c-mode-keys)
-             ))
+          (lambda ()
+            ;; my keybindings
+            (ska-c-common-mode-keys c-mode-map)
+            (ska-c-mode-keys)
+            ))
 
 (add-hook 'c-mode-common-hook
-          '(lambda ()
-             (auto-fill-mode 1)
-             ;; with c-ignore-auto-fill we have indention only in comments :)
-             (setq fill-column 70)
-             ;; determines which context to show when matching paren off screen
-             (setq paren-backwards-message t)
-             ;; ctype dynamically scans files for new type definitions
-             ;; (ska-safe-require 'ctypes)
-             ;; hereby we collect all we've seen
-             ;;(setq ctypes-write-types-at-exit t)
-             ;; .. and read it
-             ;;(ctypes-read-file nil nil t t)
-             ;; needed for ever collecting, too:
-             ;;(ctypes-auto-parse-mode 1)
-             ;; testing the oo-browser from beopen.com
-             ;;(load "br-start")
-             (setq c-indent-comments-syntactically-p t)
-             ;; testing the electric and hungry features...
-             ;; (c-toggle-auto-hungry-state t)
-             ;; ... no, I don't like em...
-             (add-hook 'write-contents-hooks #'ska-untabify
-                       nil t)
-             (setq indent-tabs-mode nil)
-             ))
+          (lambda ()
+            (auto-fill-mode 1)
+            ;; with c-ignore-auto-fill we have indention only in comments :)
+            (setq fill-column 70)
+            ;; determines which context to show when matching paren off screen
+            (setq paren-backwards-message t)
+            ;; ctype dynamically scans files for new type definitions
+            ;; (ska-safe-require 'ctypes)
+            ;; hereby we collect all we've seen
+            ;;(setq ctypes-write-types-at-exit t)
+            ;; .. and read it
+            ;;(ctypes-read-file nil nil t t)
+            ;; needed for ever collecting, too:
+            ;;(ctypes-auto-parse-mode 1)
+            ;; testing the oo-browser from beopen.com
+            ;;(load "br-start")
+            (setq c-indent-comments-syntactically-p t)
+            ;; testing the electric and hungry features...
+            ;; (c-toggle-auto-hungry-state t)
+            ;; ... no, I don't like em...
+            (add-hook 'write-contents-hooks #'ska-untabify
+                      nil t)
+            (setq indent-tabs-mode nil)
+            ))
 
 (add-to-list 'auto-insert-alist
              ;; C Program
@@ -1504,16 +1519,14 @@ This relies on a certain structure of the code."
 (put 'scroll-left 'disabled nil)
 
 
-(define-key ska-ctrl-v-map '[(control t)] 'fdlcap-change-case-current-word)
+(define-key ska-ctrl-v-map '[(control t)] #'fdlcap-change-case-current-word)
 
-(global-set-key '[(control up)]           '(lambda ()
-                                              (interactive)
-                                              (scroll-down 1)))
-(global-set-key '[(control down)]         '(lambda ()
-                                             (interactive)
-                                             (scroll-up 1)))
+(global-set-key '[(control up)] (lambda ()
+                                  (interactive)
+                                  (scroll-down 1)))
+(global-set-key '[(control down)] (lambda ()
+                                    (interactive)
+                                    (scroll-up 1)))
 
-(global-set-key '[(home)]                 'chb-home)
-(global-set-key '[(end)]                  'chb-end)
-
-
+(global-set-key '[(home)] #'chb-home)
+(global-set-key '[(end)] #'chb-end)
