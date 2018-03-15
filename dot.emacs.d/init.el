@@ -16,9 +16,12 @@
 ;; Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 ;; -----------------------------------------------------------------------
 
-(setq debug-on-error t)
-(setq use-package-verbose t)
+
 (defvar ska-init-verbose nil)
+
+(when ska-init-verbose
+  (setq debug-on-error nil)
+  (setq use-package-verbose nil))
 
 (defmacro ska-init-message (&rest args)
   (when ska-init-verbose
@@ -236,6 +239,7 @@ that was stored with ska-point-to-register."
 Without any arguments uses the PRIMARY selection, with prefix
 arguments looks into the CLIPBOARD."
   (interactive "P")
+  (push-mark (point))
   (if arg
       (insert (x-get-selection 'CLIPBOARD))
     (insert (x-get-selection))))
@@ -341,6 +345,7 @@ goes back one char itself."
   (column-number-mode 1)
   (setq next-line-add-newlines nil)
   (setq track-eol t)
+  (auto-fill-mode 1)
   :bind
   ([(control z)]         . yank)
   ([(control backspace)] . backward-kill-word)
@@ -548,7 +553,8 @@ is to skip only the special buffers whose name begins with a space . "
     (require 'helm-config)
     (global-unset-key (kbd "C-x c")))
   :bind
-  ("C-S-SPC" . helm-command-prefix))
+  (:map ska-ctrl-v-map 
+        ([(control h)] . helm-command-prefix)))
 
 (use-package projectile
   :ensure t
@@ -556,7 +562,7 @@ is to skip only the special buffers whose name begins with a space . "
   :diminish projectile-mode
   :bind
   (:map ska-ctrl-v-map
-	([(control p)] . projectile-command-map))
+	([(control p)] . projectile-commander))
   :config
   (projectile-global-mode 1)
   (setq projectile-completion-system 'ivy))
@@ -594,9 +600,9 @@ is to skip only the special buffers whose name begins with a space . "
   
 ;;; Packages related to major modes (from any source)
 
-(use-package text-mode-hook
-  :config
-  (auto-fill-mode 1))
+;; (use-package text-mode
+;;   :config
+;;   (auto-fill-mode 1))
 
 (use-package markdown-mode
   :ensure t
@@ -608,9 +614,12 @@ is to skip only the special buffers whose name begins with a space . "
 (use-package yaml-mode
   :ensure t)
 
+(use-package graphviz-dot-mode
+  :ensure t)
+
 (use-package conf-mode)
 
-(use-package emacs-lisp-mode
+(use-package lisp-mode
   :chords
   (("jj" . "("))
   :config
@@ -692,7 +701,7 @@ is to skip only the special buffers whose name begins with a space . "
      ))
   )
 
-(use-package python-mode)
+(use-package python)
 
 (use-package sh-script
   :mode (("\\.*bashrc$" . sh-mode)
@@ -704,7 +713,7 @@ is to skip only the special buffers whose name begins with a space . "
   (:map help-mode-map
 	("f" . find-function-at-point)))
 
-(use-package html-mode
+(use-package sgml-mode
   :config
   (add-hook 'html-mode-hook
             (lambda ()
