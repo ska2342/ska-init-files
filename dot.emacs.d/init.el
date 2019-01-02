@@ -205,34 +205,21 @@ shebang executable."
          (t
           (goto-char (point-max)))))))
 
-(defun ska-point-to-register ()
-  "Store cursorposition _fast_ in a register. Use ska-jump-to-register
-to jump back to the stored position."
-  (interactive)
-  (point-to-register 8))
-
-(defun ska-jump-to-register ()
-  "Switches between current cursorposition and position
-that was stored with ska-point-to-register."
-  (interactive)
-  (let ((tmp (point-marker)))
-    (jump-to-register 8)
-    (set-register 8 tmp)))
 ;; Something new
-;; Should probably integrate transparently with ska-point-to-register.
-(defvar ska-point-stack)
-(defun ska-point-push ()
-  (interactive)
-  (push (point-marker) ska-point-stack))
-(defun ska-point-pop ()
-  (interactive)
-  (when ska-point-stack
-    (let* ((m (pop ska-point-stack))
-           (b (marker-buffer m)))
-      (switch-to-buffer b)
-      (goto-char m))))
-(global-set-key (kbd "C-:") #'ska-point-push)
-(global-set-key (kbd "C-;") #'ska-point-pop)
+;; Should probably integrate transparently with detour. Does it even improve pop-global-mark?
+;; (defvar ska-point-stack)
+;; (defun ska-point-push ()
+;;   (interactive)
+;;   (push (point-marker) ska-point-stack))
+;; (defun ska-point-pop ()
+;;   (interactive)
+;;   (when ska-point-stack
+;;     (let* ((m (pop ska-point-stack))
+;;            (b (marker-buffer m)))
+;;       (switch-to-buffer b)
+;;       (goto-char m))))
+;; (global-set-key (kbd "C-:") #'ska-point-push)
+;; (global-set-key (kbd "C-;") #'ska-point-pop)
 
 (defun ska-insert-x-selection (arg)
   "Insert the current X selection at point.
@@ -358,12 +345,6 @@ goes back one char itself."
   :config
   (setq require-final-newline nil))
 
-(use-package register
-  :bind
-  ([(control \.)] . ska-point-to-register)
-  ([(control \,)] . ska-jump-to-register)
-  ([(control \')] . point-to-register))
-
 (use-package align
   :bind
   (:map ska-ctrl-v-map
@@ -417,6 +398,11 @@ goes back one char itself."
   :ensure t
   :config 
   (highlight-context-line-mode))
+
+(use-package detour
+  :bind
+  ([(control \.)] . detour-mark)
+  ([(control \,)] . detour-back))
 
 ;; Packages living in my ~/.emacs.d/lisp dir. These are not
 ;; package-installable. Mostly written by me or friends or found
@@ -477,8 +463,8 @@ is to skip only the special buffers whose name begins with a space . "
 (use-package flyspell
   :bind
   (:map flyspell-mode-map
-        ([(control \. )] . ska-point-to-register)
-        ([(control \,)]  . ska-jump-to-register)))
+        ([(control \. )] . detour-mark)
+        ([(control \,)]  . detour-back)))
 
 (use-package locate
   :bind
@@ -535,9 +521,22 @@ is to skip only the special buffers whose name begins with a space . "
   :ensure t)
 
 (use-package ivy
+  :demand
   :ensure t
+  :bind
+  (:map ska-ctrl-v-map
+	([(control r)] . ivy-resume))
   :config
-  (ivy-mode 1))
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t
+        ivy-count-format "%d/%d "
+        ivy-extra-directories nil
+        ivy-on-del-error-function #'ignore
+        ))
+
+(use-package ag
+  :ensure t
+  :pin melpa-stable)
 
 (use-package company
   :ensure t
@@ -556,6 +555,12 @@ is to skip only the special buffers whose name begins with a space . "
   (:map ska-ctrl-v-map 
         ([(control h)] . helm-command-prefix)))
 
+(use-package which-key
+  :ensure t
+  :pin melpa-stable
+  :config
+  (which-key-mode 1))
+
 (use-package projectile
   :ensure t
   :after ivy
@@ -572,6 +577,11 @@ is to skip only the special buffers whose name begins with a space . "
   :bind
   (:map ska-ctrl-v-map 
         ([(control g)] . magit-status)))
+
+(use-package org
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook #'auto-fill-mode))
 
 (use-package linum
   :ensure t
@@ -632,7 +642,7 @@ is to skip only the special buffers whose name begins with a space . "
   :chords
   (("jj" . "(")
    ("JJ" . "[")
-   (";B" . "{"))
+   ("BB" . "{"))
   :config
   (add-to-list 'auto-mode-alist '("\\.boot$"  . clojure-mode))
   (add-to-list 'magic-mode-alist '(".* boot" . clojure-mode))
@@ -686,18 +696,17 @@ is to skip only the special buffers whose name begins with a space . "
 	   cperl-indent-level 4
 	   cperl-auto-newline nil
 	   cperl-electric-linefeed nil
-	   cperl-electric-parens nil
+	   cperl-electric-parens t
 	   cperl-electric-lbrace-space t
 	   cperl-electric-keywords nil
 	   cperl-mode-abbrev-table nil
 	   cperl-lazy-help-time 1
 	   cperl-pod-here-fontify nil
 	   cperl-highlight-variables-indiscriminately t
-	   Manual-buffer-view-mode 1
-	
 	   )
      (auto-fill-mode 1)
      (cperl-lazy-install)
+     (turn-off-smartparens-mode)
      ))
   )
 
@@ -748,8 +757,8 @@ is to skip only the special buffers whose name begins with a space . "
   :bind
   (:map nxml-mode-map
 	([(control c) (/)]          . nxml-finish-element)
-	([(control c) (control \.)] . ska-point-to-register)
-	([(control c) (control \,)] . ska-jump-to-register))
+	([(control c) (control \.)] . detour-mark)
+	([(control c) (control \,)] . detour-back))
   :config
   (setq magic-mode-alist
 	(cons '("<\\?xml " . nxml-mode) magic-mode-alist))
@@ -1522,6 +1531,7 @@ This relies on a certain structure of the code."
 (fset 'yes-or-no-p 'y-or-n-p)
 ;(setq eshell-ask-to-save-history 'always)
 (setq inhibit-splash-screen t)
+(setq visible-bell t)
 ;(setq apropos-do-all t)
 (put 'narrow-to-region 'disabled nil)
 (put 'erase-buffer 'disabled nil)
