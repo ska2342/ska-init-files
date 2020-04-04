@@ -1,5 +1,5 @@
 ;;; Init for GNU Emacs
-;;; (C) 2004-2017 Stefan Kamphausen www.skamphausen.de
+;;; (C) 2004-2020 Stefan Kamphausen www.skamphausen.de
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
