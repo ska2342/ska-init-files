@@ -47,7 +47,6 @@
      (append
       (list
        "~/.emacs.d/lisp"
-       ;;"~/local/opt/slime/"
        )
       load-path))
 
@@ -295,11 +294,23 @@ goes back one char itself."
   :ensure t
   :config (key-chord-mode 1))
 
-(use-package darktooth-theme
+;; (use-package darktooth-theme
+;;   :ensure t
+;;   :config
+;;   (load-theme 'darktooth t)
+;;   (darktooth-modeline))
+;; I seem to like nimbus because the contrast is better than darktooth
+;;   for my eyes. I just can't see buffer boundaries so would have to
+;;   either set the mode-line faces directly or try if powerline works
+;;   for me.
+;; (use-package powerline
+;;   :ensure t
+;;   :config
+;;   (powerline-default-theme))
+(use-package nimbus-theme
   :ensure t
   :config
-  (load-theme 'darktooth t)
-  (darktooth-modeline))
+  (copy-face 'mode-line 'mode-line-inactive))
 
 ;;; Built-in packages you usually don't even care about requiring.
 (use-package saveplace
@@ -555,6 +566,12 @@ is to skip only the special buffers whose name begins with a space . "
   (:map ska-ctrl-v-map 
         ([(control h)] . helm-command-prefix)))
 
+;; Has to wait until I get Emacs >= 25.3.x
+;; (use-package dashboard
+;;   :ensure t
+;;   :config
+;;   (dashboard-setup-startup-hook))
+
 (use-package which-key
   :ensure t
   :pin melpa-stable
@@ -574,9 +591,13 @@ is to skip only the special buffers whose name begins with a space . "
 
 (use-package magit
   :ensure t
-  :bind
-  (:map ska-ctrl-v-map 
-        ([(control g)] . magit-status)))
+  :chords (("GG" . magit-status))
+  ;; :bind
+  ;; (:map ska-ctrl-v-map 
+  ;;       ([(g)] . magit-status))
+  :config
+  (setq magit-display-buffer-function
+        #'magit-display-buffer-same-window-except-diff-v1))
 
 (use-package org
   :ensure t
@@ -624,6 +645,9 @@ is to skip only the special buffers whose name begins with a space . "
 (use-package yaml-mode
   :ensure t)
 
+(use-package terraform-mode
+  :ensure t)
+
 (use-package graphviz-dot-mode
   :ensure t)
 
@@ -647,13 +671,21 @@ is to skip only the special buffers whose name begins with a space . "
   (add-to-list 'auto-mode-alist '("\\.boot$"  . clojure-mode))
   (add-to-list 'magic-mode-alist '(".* boot" . clojure-mode))
   (add-hook 'clojure-mode-hook #'subword-mode)
-  (add-hook 'clojure-mode-hook #'auto-fill-mode))
+  (add-hook 'clojure-mode-hook #'auto-fill-mode)
+  (add-to-list 'auto-insert-alist
+             '(clojure-mode
+               nil
+               (clojure-insert-ns-form) "\n"
+               ";; Copyright (C) " (substring (current-time-string) -4)
+               " " auto-insert-copyright "\n;;\n"
+               ";; Author: "(user-full-name) "\n;;\n"
+               )))
 
 (use-package cider
   :ensure t
   :pin melpa-stable
   :init
-  (setq cider-use-tooltips nil ; breaks mouse selection for me
+  (setq cider-use-tooltips t ; breaks mouse selection for me
         cider-repl-tab-command 'indent-for-tab-command
         cider-repl-history-file "~/.emacs.d/cider-history.eld"
         cider-auto-select-error-buffer t
