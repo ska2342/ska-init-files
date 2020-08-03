@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 #
 # File: manage.pl
-# Time-stamp: <2017-04-20 16:23:45 ska>
+# Time-stamp: <2020-08-03 14:48:53 ska>
 #
 # Copyright (C) 2016 by Stefan Kamphausen
 #
@@ -21,18 +21,22 @@ use Pod::Usage;
 
 use File::Compare;
 use File::Copy;
+use File::Basename qw/dirname/;
+use File::Path qw/make_path/;
 
 my $Version = "1.0";
 ######################################################################
 ##                             OPTIONS
 ######################################################################
 GetOptions(
-           "install|i"  => \my $install,
-           "collect|c"  => \my $collect,
-           "force|f"    => \my $force,
-           "help|h!"    => \my $help,
-           "longhelp!"  => \my $longhelp,
-           "version|v!" => \my $version
+           "install|i"   => \my $install,
+           "collect|c"   => \my $collect,
+           "kdeconfig|k" => \my $kde_config,
+           "dryrun|n"    => \my $dryrun,
+           "force|f"     => \my $force,
+           "help|h"     => \my $help,
+           "longhelp"   => \my $longhelp,
+           "version|v"  => \my $version
            ) or pod2usage(
                           verbose    => 0,
                           exitstatus => 1
@@ -68,6 +72,65 @@ my %files =
    "bash/dot.color-man"              => ".color-man",
    "dot.screenrc"                    => ".screenrc"
   );
+
+my %kde_settings =
+  ("kwinrc" =>
+   {"Windows" => [
+                  ["AutoRaise",   "false"],
+                  ["FocusPolicy", "FocusFollowsMouse"],
+                  ["RollOverDesktops", "false"],
+                  ["GeometryTip", "true"],
+                 ],
+    "Desktops" => [
+                   ["Name_1", "1.1"],
+                   ["Name_2", "1.2"],
+                   ["Name_3", "1.3"],
+                   ["Name_4", "2.1"],
+                   ["Name_5", "2.2"],
+                   ["Name_6", "2.3"],
+                   ["Name_7", "3.1"],
+                   ["Name_8", "3.2"],
+                   ["Name_9", "3.3"],
+                   ["Number", "9"],
+                   ["Rows", "3"],
+                  ],
+    "ElectricBorders" => [
+                          ["Bottom",      "None"],
+                          ["BottomLeft",  "None"],
+                          ["BottomRight", "None"],
+                          ["Left",        "None"],
+                          ["Right",       "None"],
+                          ["Top",         "None"],
+                          ["TopLeft",     "None"],
+                          ["TopRight",    "None"],
+                         ],
+    "ModifierOnlyShortcuts" => [["Meta", ""]],
+    "MouseBindings" => [
+                        ["CommandActiveTitlebar1", "Raise"],
+                        ["CommandActiveTitlebar2", "Nothing"],
+                        ["CommandActiveTitlebar3", "Operations menu"],
+                        ["CommandAll1", "Move"],
+                        ["CommandAll2", "Resize"],
+                        ["CommandAll3", "Toggle raise and lower"],
+                        ["CommandAllKey", "Meta"],
+                        ["CommandAllWheel", "Nothing"],
+                        ["CommandInactiveTitlebar1", "Activate and raise"],
+                        ["CommandInactiveTitlebar2", "Nothing"],
+                        ["CommandInactiveTitlebar3", "Operations menu"],
+                        ["CommandTitlebarWheel", "Nothing"],
+                        ["CommandWindow1", "Activate, raise and pass click"],
+                        ["CommandWindow2", "Activate and pass click"],
+                        ["CommandWindow3", "Activate and pass click"],
+                        ["CommandWindowWheel", "Scroll"],
+                       ],
+   },
+   "plasmarc" =>
+   {
+    "Theme" => [["name", "breeze-dark"]],
+    "Wallpapers" => [["usersWallpapers", "/home/ska/etc/desktop/WS2.JPG"]]
+   },
+   );
+
 my $home = $ENV{HOME};
 
 unless (defined($home)) {
@@ -77,6 +140,8 @@ if ($collect) {
     run_collect();
 } elsif ($install) {
     run_install();
+} elsif ($kde_config) {
+    run_kde_config();
 } else {
     pod2usage(verbose => 0, message => "No operation mode.",
              exitstatus => 11);
@@ -89,6 +154,7 @@ exit;
 sub run_install {
     for my $repo (keys %files) {
         my $real = "$home/$files{$repo}";
+
         if ( -f $real && $force) {
             print "Updating: \"$repo\" --> \"$real\"\n";
         } elsif (! -f $real) {
@@ -97,9 +163,48 @@ sub run_install {
             print "Skipping \"$repo\"\n";
             next;
         }
-        copy($repo, $real) or die
-          "Could not copy \"$repo\" to \"$real\": $!";
 
+        my $dir = dirname($real);
+        if (! -d $dir) {
+            print "Creating directory and parents \"$dir\"\n";
+            make_path($dir) or die
+              "Can't create path: $!\n";
+        }
+        if ($dryrun) {
+            print "copy $repo -> $real\n";
+        } else {
+            copy($repo, $real) or die
+              "Could not copy \"$repo\" to \"$real\": $!";
+        }
+    }
+}
+sub run_kde_config {
+    for my $file (keys %kde_settings) {
+        my %file_settings = %{ $kde_settings{$file} };
+        for my $group (keys %file_settings) {
+            my @grp_settings = @{ $file_settings{$group} };
+            for my $setting (@grp_settings) {
+                my @cmd =
+                  ("kwriteconfig5",
+                   "--file", $file,
+                   "--group", $group,
+                   "--key", $setting->[0],
+                   $setting->[1]);
+                if ($dryrun) {
+                    print "call: " . join(" ", @cmd) . "\n";
+                } else {
+                    system(@cmd) == 0 or die
+                      "Error in kwriteconfig5" . $! . Dumper(\@cmd);
+                }
+            }
+        }
+    }
+    my $kwin_restart = "qdbus org.kde.KWin /KWin reconfigure";
+    if ($dryrun) {
+        print "call: $kwin_restart\n";
+    } else {
+        system($kwin_restart) == 0
+          or die "Can't reconfigure kwin: $!\n";
     }
 }
 sub run_collect {
@@ -107,8 +212,12 @@ sub run_collect {
         my $real = "$home/$files{$repo}";
         if (compare($real, $repo) != 0) {
             print "Getting update: \"$real\" --> \"$repo\"\n";
-            copy($real, $repo) or die
-              "Could not copy \"$real\" to \"$repo\": $!";
+            if ($dryrun) {
+                print "copy $real -> $repo\n";
+            } else {
+                copy($real, $repo) or die
+                  "Could not copy \"$real\" to \"$repo\": $!";
+            }
         }
     }
 }
@@ -137,6 +246,14 @@ overwrite already existing files unless forced with --force.
 
 Collect files from your home back into the repo so that you can
 compare and possibly update the repo.
+
+=item B<-k, --kdeconfig>
+
+Run KDE configuration using kwriteconfig5.
+
+=item B<-n, --dryrun>
+
+Don't perform any actions, just print what would happen.
 
 =item B<-f, --force>
 
