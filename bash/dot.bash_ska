@@ -23,7 +23,7 @@ PS1="#$PS1"
 
 function is_in_path {
     local needle="${1%/}"
-    local haystack=$(echo $PATH | perl -n -e "print(join(' ', split(/:/,$_)))")
+    local haystack=$(echo $PATH | perl -n -e "print(join(' ', split(/:/)))")
     for h in $haystack; do
 	if [ "$needle" == "$h" ]; then 
 	    return 0
@@ -64,4 +64,8 @@ test -f ~/.color-man && . ~/.color-man
 if [ -f ~/.remote-connections ]; then
     . ~/.remote-connections
 fi
+
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
