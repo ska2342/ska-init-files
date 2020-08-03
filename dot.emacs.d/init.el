@@ -412,6 +412,7 @@ goes back one char itself."
   (highlight-context-line-mode))
 
 (use-package detour
+  :ensure t
   :bind
   ([(control \.)] . detour-mark)
   ([(control \,)] . detour-back))
