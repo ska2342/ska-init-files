@@ -56,7 +56,7 @@
 (require 'package)
 (add-to-list
  'package-archives
- '("melpa" . "http://melpa.milkbox.net/packages/") t)
+ '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list
  'package-archives
  '("melpa-stable" . "https://stable.melpa.org/packages/") t)
@@ -96,7 +96,8 @@
 
 \(setq user-mail-address \""
      (completing-read
-      "Enter your email adress to seed new ~/.emacs.d/user.el: ")
+      "Enter your email adress to seed new ~/.emacs.d/user.el: "
+      nil)
      "\")
 \(setq my-copyright-holder \""
      (completing-read
