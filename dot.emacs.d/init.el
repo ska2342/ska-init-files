@@ -110,7 +110,10 @@
     (write-region (point-min) (point-max) ska-user-init-file)))
 (load ska-user-init-file)
 
-
+;;; Local, not in version control
+(setq ska-local-init-file "~/.emacs.d/local.el")
+(when (file-exists-p ska-local-init-file)
+  (load ska-local-init-file))
 
 ;; I have my own global keymaps. C-v corresponds to C-x and C-b to
 ;; C-c. C-v is my own global bindings, while C-b is for mode-specific
@@ -313,6 +316,11 @@ goes back one char itself."
   :config
   (copy-face 'mode-line 'mode-line-inactive))
 
+(use-package mood-line
+  :ensure t
+  :hook (after-init . mood-line-mode))
+
+
 ;;; Built-in packages you usually don't even care about requiring.
 (use-package saveplace
   :demand t
@@ -440,7 +448,8 @@ is to skip only the special buffers whose name begins with a space . "
      (string-match "inferior-lisp" (buffer-name buffer))
      (string-match "[Cc]ompil" (buffer-name buffer))))
   
-  (setq mtorus-buffer-skip-p 'mtorus-my-buffer-skip-p))
+  (setq mtorus-buffer-skip-p 'mtorus-my-buffer-skip-p
+        mtorus-notify-popup-separator "  "))
 
 (use-package ll-debug
   :bind
@@ -604,12 +613,20 @@ is to skip only the special buffers whose name begins with a space . "
 (use-package org
   :ensure t
   :config
-  (add-hook 'org-mode-hook #'auto-fill-mode))
+  (add-hook 'org-mode-hook #'auto-fill-mode)
+  (setq org-todo-keywords
+        '((sequence "TODO" "|" "DONE" "CANCELED"))))
+
+
 
 (use-package linum
   :ensure t
   :config (global-linum-mode t))
 
+;; (use-package docker
+;;   :ensure t
+;;   :pin melpa-stable
+;;   :chords (("DD" . docker)))
 
 (use-package windresize
   :ensure t
@@ -621,6 +638,9 @@ is to skip only the special buffers whose name begins with a space . "
    ([(f8)] . windresize)))
 
 (use-package subword
+  :ensure t)
+
+(use-package restclient
   :ensure t)
 
 (use-package smartparens
@@ -646,6 +666,10 @@ is to skip only the special buffers whose name begins with a space . "
 
 (use-package yaml-mode
   :ensure t)
+
+(use-package groovy-mode
+  :ensure t
+  :pin melpa-stable)
 
 (use-package terraform-mode
   :ensure t)
