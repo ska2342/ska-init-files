@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 #
 # File: manage.pl
-# Time-stamp: <2020-08-03 14:48:53 ska>
+# Time-stamp: <2020-09-07 23:26:16 ska>
 #
 # Copyright (C) 2016 by Stefan Kamphausen
 #
@@ -206,6 +206,7 @@ sub run_kde_config {
         system($kwin_restart) == 0
           or die "Can't reconfigure kwin: $!\n";
     }
+    # ? qdbus org.kde.klauncher /KLauncher org.kde.KLauncher.reparseConfiguration
 }
 sub run_collect {
     for my $repo (keys %files) {
