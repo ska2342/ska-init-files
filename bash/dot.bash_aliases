@@ -209,6 +209,10 @@ alias df='df -h'
 alias mc='mc -x'
 alias lc='wc -l'
 
+function jwt_decode () {
+    jq -R 'split(".") | .[1] | @base64d | fromjson' <<< "$1"
+}
+
 #alias hiddentop='wterm -T hidden +sb -tr -fg "#cecece" -bg "#334577" -e top&'
 # alias hiddentop='urxvt -T hidden +sb -tr -fg "#9e9e9e" -bg "#336577" -geometry +796+0 -e top&'
 # alias sm='/usr/sbin/sendmail -v -q'
