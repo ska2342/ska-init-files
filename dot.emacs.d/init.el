@@ -54,12 +54,10 @@
 (setq package-enable-at-startup nil)
 ;; Just expect this to be available these days.
 (require 'package)
-(add-to-list
- 'package-archives
- '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list
- 'package-archives
- '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+
+(dolist (pkg '(("melpa-stable" . "https://stable.melpa.org/packages/")
+               ("melpa-unstable" . "https://melpa.org/packages/")))
+  (add-to-list 'package-archives pkg))
 
 ;; package usually loads packages after init.el; this breaks my way of
 ;; configuring things here.  See
