@@ -555,6 +555,11 @@ is to skip only the special buffers whose name begins with a space . "
         ivy-on-del-error-function #'ignore
         ))
 
+;; (use-package ctrlf
+;;   :ensure t
+;;   :config
+;;   (ctrlf-mode +1))
+
 (use-package ag
   :ensure t
   :pin melpa-stable)
@@ -609,6 +614,11 @@ is to skip only the special buffers whose name begins with a space . "
   :config
   (setq magit-display-buffer-function
         #'magit-display-buffer-same-window-except-diff-v1))
+
+(use-package forge
+  :ensure t
+  :pin melpa-unstable
+  :after magit)
 
 (use-package org
   :ensure t
