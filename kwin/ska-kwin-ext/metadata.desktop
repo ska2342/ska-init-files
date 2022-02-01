@@ -1,0 +1,15 @@
+[Desktop Entry]
+Name=ska KWin Extensions
+Comment=Whatever I need to extend KWin.
+Icon=preferences-system-windows
+
+X-KDE-PluginInfo-Author=Stefan Kamphausen
+X-KDE-PluginInfo-Email=ska2342@gmail.com
+X-KDE-PluginInfo-Name=ska-kwin-ext
+X-KDE-PluginInfo-Version=1.0
+X-KDE-PluginInfo-License=GPL
+
+Type=Service
+X-KDE-ServiceTypes=KWin/Script
+X-Plasma-API=javascript
+X-Plasma-MainScript=code/main.js
