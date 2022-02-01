@@ -601,7 +601,8 @@ is to skip only the special buffers whose name begins with a space . "
 
 (use-package magit
   :ensure t
-  :chords (("GG" . magit-status))
+  :chords (("GG" . magit-status)
+           ("FF" . magit-file-dispatch))
   ;; :bind
   ;; (:map ska-ctrl-v-map 
   ;;       ([(g)] . magit-status))
