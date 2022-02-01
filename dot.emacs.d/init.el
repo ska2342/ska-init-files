@@ -151,27 +151,28 @@ modes you want it to:
   (and (buffer-file-name)
        (tramp-tramp-file-p (buffer-file-name))))
 
-(defun ska-make-executable ()
-  "Magic function to never have to chmod a script again.
-This function is intended to be hooked to `after-save-hook` like this:
+;; Superseeded by use-package 'executable below
+;; (defun ska-make-executable ()
+;;   "Magic function to never have to chmod a script again.
+;; This function is intended to be hooked to `after-save-hook` like this:
 
-   (add-hook 'after-save-hook 'ska-make-executable)
+;;    (add-hook 'after-save-hook #'ska-make-executable)
 
-Having done this you will automatically find all files starting with a
-shebang executable."
-  (interactive)
-  (and 
-   (not (ska-current-buffer-is-tramp-file))
-   (save-excursion
-         (save-restriction
-           (widen)
-           (goto-char (point-min))
-           (save-match-data
-             (looking-at "^#!"))))
-       (not (file-executable-p buffer-file-name))
-       (shell-command (concat "chmod u+x " buffer-file-name))
-       (message
-        (concat "Saved as script: " buffer-file-name))))
+;; Having done this you will automatically find all files starting with a
+;; shebang executable."
+;;   (interactive)
+;;   (and 
+;;    (not (ska-current-buffer-is-tramp-file))
+;;    (save-excursion
+;;          (save-restriction
+;;            (widen)
+;;            (goto-char (point-min))
+;;            (save-match-data
+;;              (looking-at "^#!"))))
+;;        (not (file-executable-p buffer-file-name))
+;;        (shell-command (concat "chmod u+x " buffer-file-name))
+;;        (message
+;;         (concat "Saved as script: " buffer-file-name))))
 
 
 (defun show-message-log ()
