@@ -136,9 +136,9 @@ Use some lines along the following for getting this to work in the
 modes you want it to:
  
 \(add-hook 'some-mode-hook  
-          '(lambda () 
-              (make-local-hook 'write-contents-hooks) 
-               (add-hook 'write-contents-hooks 'ska-untabify nil t)))"
+          (lambda () 
+             (make-local-hook 'write-contents-hooks) 
+             (add-hook 'write-contents-hooks #'ska-untabify nil t)))"
   (interactive)
   (save-excursion
     (goto-char (point-min))
@@ -446,7 +446,7 @@ is to skip only the special buffers whose name begins with a space . "
      (string-match "inferior-lisp" (buffer-name buffer))
      (string-match "[Cc]ompil" (buffer-name buffer))))
   
-  (setq mtorus-buffer-skip-p 'mtorus-my-buffer-skip-p
+  (setq mtorus-buffer-skip-p #'mtorus-my-buffer-skip-p
         mtorus-notify-popup-separator "  "))
 
 (use-package ll-debug
@@ -710,7 +710,7 @@ is to skip only the special buffers whose name begins with a space . "
   :pin melpa-stable
   :init
   (setq cider-use-tooltips t ; breaks mouse selection for me
-        cider-repl-tab-command 'indent-for-tab-command
+        cider-repl-tab-command #'indent-for-tab-command
         cider-repl-history-file "~/.emacs.d/cider-history.eld"
         cider-auto-select-error-buffer t
         cider-repl-display-help-banner nil
@@ -800,16 +800,16 @@ is to skip only the special buffers whose name begins with a space . "
 	      (setq web-mode-script-padding 2))))
 
 (use-package nxml-mode
-  :mode (("\\.gpx\\'" . nxml-mode)
-         ("\\.plist\\'" . nxml-mode)
-         ("\\.rng\\'" . nxml-mode)
-         ("\\.rss\\'" . nxml-mode)
-         ("\\.sch\\'" . nxml-mode)
-         ("\\.svg\\'" . nxml-mode)
-         ("\\.tcx\\'" . nxml-mode)
-         ("\\.xml\\'" . nxml-mode)
-         ("\\.xsd\\'" . nxml-mode)
-         ("\\.xslt\\'" . nxml-mode))
+  :mode (("\\.gpx$" . nxml-mode)
+         ("\\.plist$" . nxml-mode)
+         ("\\.rng$" . nxml-mode)
+         ("\\.rss$" . nxml-mode)
+         ("\\.sch$" . nxml-mode)
+         ("\\.svg$" . nxml-mode)
+         ("\\.tcx$" . nxml-mode)
+         ("\\.xml$" . nxml-mode)
+         ("\\.xsd$" . nxml-mode)
+         ("\\.xslt$" . nxml-mode))
   :bind
   (:map nxml-mode-map
 	([(control c) (/)]          . nxml-finish-element)
