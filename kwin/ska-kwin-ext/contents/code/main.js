@@ -1,3 +1,5 @@
+var previous_geometries = [];
+
 function makeSticky(client) {
     client.onAllDesktops = true;
 }
@@ -46,31 +48,74 @@ function isMainWindow(client) {
     }
 }
 
-// Yes, hardcoded positions. Good enough for now.
-function meetingWindowGeometry() {
+function toRect(geom) {
     return {
-        x: 2560, y: 0,
-        width: 1200, height: 777
+        x: geom.x,
+        y: geom.y,
+        width: geom.width,
+        height: geom.height
     };
 }
 
-function mainWindowGeometry() {
-    return {
-        x: 3490, y: 482,
-        width: 990, height: 550
-    };
+function geomToString(g) {
+    if (g === null || g === undefined) {
+        return "no geometry";
+    } else {
+        var s =  "Geometry(";
+        s = s + "x:" + g.x + ", ";
+        s = s + "y:" + g.y + ", ";
+        s = s + "w:" + g.width + ", ";
+        s = s + "h:" + g.height + ", ";
+        s = s + ")";
+        return s;
+    }
+    // return "geomTostring" + g;
+}
+
+// Yes, hardcoded positions. Good enough for now.
+function meetingWindowGeometry(client) {
+    if (previous_geometries[0] === null
+        || previous_geometries[0] === undefined) {
+        previous_geometries[0] = toRect(client.geometry);
+        return {
+            x: 2560, y: 0,
+            width: 1200, height: 777
+        };
+    } else {
+        var geo = previous_geometries[0];
+        previous_geometries[0] = null;
+        return geo;
+    }
+}
+
+function mainWindowGeometry(client) {
+    if (previous_geometries[1] === null
+        || previous_geometries[1] === undefined) {
+        previous_geometries[1] = toRect(client.geometry);
+        return {
+            x: 3490, y: 482,
+            width: 990, height: 550
+        };
+    } else {
+        var geo = previous_geometries[1];
+        previous_geometries[1] = null;
+        return geo;
+    }
 }
 
 function zoomApplyCommonLayout() {
+    print("Geo0:" + geomToString(previous_geometries[0]));
+    print("Geo1:" + geomToString(previous_geometries[1]));
+    // print("Screens:" + workspace.numScreens);
     const zooms = getZoomWindows();
     zooms.forEach(function (zwin) {
         if(isMainWindow(zwin)) {
             makeSticky(zwin);
-            zwin.geometry = mainWindowGeometry();
+            zwin.geometry = mainWindowGeometry(zwin);
         }
         if(isMeetingWindow(zwin)) {
             makeSticky(zwin);
-            zwin.geometry = meetingWindowGeometry();
+            zwin.geometry = meetingWindowGeometry(zwin);
         }
     });
 }
@@ -89,11 +134,11 @@ registerShortcut (
     function () { zoomApplyCommonLayout(); }
 );
 workspace.clientAdded.connect(onClientAddedArrangeZoom);
+previous_geometries = [];
 
 // function echoClientInfo() {
 //     workspace.clientList().forEach(function (client) {
 //         print("- " + client.resourceClass + " " + client.resourceName);
 //     });
 // }
-
 
