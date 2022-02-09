@@ -76,7 +76,9 @@ function zoomApplyCommonLayout() {
 }
 
 function onClientAddedArrangeZoom(client) {
-    if(isZoomWindow(client)) {
+    if(workspace.numScreens > 1
+       && isZoomWindow(client)
+       && !clientCaptionFind(client, 'Chat')) {
         zoomApplyCommonLayout();
     }
 }
