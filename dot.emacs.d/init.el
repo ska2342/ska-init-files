@@ -1,4 +1,4 @@
-;;; Init for GNU Emacs
+;; Init for GNU Emacs
 ;;; (C) 2004-2020 Stefan Kamphausen www.skamphausen.de
 
 ;; This program is free software; you can redistribute it and/or
@@ -120,6 +120,11 @@
 (define-prefix-command 'ska-ctrl-v-map)
 (global-set-key '[(control v)] 'ska-ctrl-v-map)
 
+;; Experimental
+(if (and (>= emacs-major-version 27)
+         (featurep 'cairo))
+    (set-fontset-font t '(#x1f000 . #x1faff)
+                      (font-spec :family "Noto Color Emoji")))
 
 ;;; Functions
 (ska-init-message "Defining functions")
@@ -313,7 +318,8 @@ goes back one char itself."
 (use-package nimbus-theme
   :ensure t
   :config
-  (copy-face 'mode-line 'mode-line-inactive))
+  (copy-face 'mode-line 'mode-line-inactive)
+  (load-theme 'nimbus t))
 
 (use-package mood-line
   :ensure t
