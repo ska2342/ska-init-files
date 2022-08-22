@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 #
 # File: manage.pl
-# Time-stamp: <2020-09-07 23:26:16 ska>
+# Time-stamp: <2022-08-22 11:10:57 ska>
 #
 # Copyright (C) 2016 by Stefan Kamphausen
 #
@@ -64,7 +64,7 @@ if ($version) {
 my %files =
   ("dot.emacs.d/init.el"             => ".emacs.d/init.el",
    "dot.emacs.d/lisp/chb-util.el"    => ".emacs.d/lisp/chb-util.el",
-   "dot.emacs.d/lisp/active-menu.el" => ".emacs.d/lisp/chb-util.el",
+   "dot.emacs.d/lisp/active-menu.el" => ".emacs.d/lisp/active-menu.el",
    "dot.emacs.d/lisp/linmag-mode.el" => ".emacs.d/lisp/linmag-mode.el",
    "dot.emacs.d/lisp/mtorus.el"      => ".emacs.d/lisp/mtorus.el",
    "bash/dot.bash_ska"               => ".bash_ska",
@@ -179,6 +179,7 @@ sub run_install {
     }
 }
 sub run_kde_config {
+    install_kwin_extensions();
     for my $file (keys %kde_settings) {
         my %file_settings = %{ $kde_settings{$file} };
         for my $group (keys %file_settings) {
@@ -221,6 +222,12 @@ sub run_collect {
             }
         }
     }
+}
+
+sub install_kwin_extensions {
+    my $pack = "plasmapkg2 --type kwindscript";
+    # installed already? If so, update
+    # else install
 }
 __END__
 ######################################################################
