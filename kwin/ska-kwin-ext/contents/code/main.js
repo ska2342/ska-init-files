@@ -133,7 +133,7 @@ registerShortcut (
     "Ctrl+Meta+Z",
     function () { zoomApplyCommonLayout(); }
 );
-workspace.clientAdded.connect(onClientAddedArrangeZoom);
+//workspace.clientAdded.connect(onClientAddedArrangeZoom);
 previous_geometries = [];
 
 // function echoClientInfo() {
