@@ -237,6 +237,8 @@ alias snetinfo="sudo netinfo"
 
 # Nice things from www.catonmat.net
 alias direxporthttp='python -m SimpleHTTPServer'
+alias direxporthttp='python3 -m http.server 9000'
+
 function watchdir {
   local directory=$1
   if [ -z "$directory" ]; then
