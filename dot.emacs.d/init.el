@@ -297,6 +297,13 @@ goes back one char itself."
 
 ;; Now using John Wiegley's use-package loaded earlier
 
+;;; Todo
+;; Maybe take a look at these later
+;; https://github.com/chuntaro/emacs-keypression when casting
+
+
+
+
 ;; First loading packages that add functions to use-package itself.
 (use-package use-package-chords
   :ensure t
@@ -566,9 +573,18 @@ is to skip only the special buffers whose name begins with a space . "
 ;;   :config
 ;;   (ctrlf-mode +1))
 
-(use-package ag
+;; After reading https://blog.burntsushi.net/ripgrep/ I feel I should
+;; switch from AG to RG.
+;; (use-package ag
+;;   :ensure t
+;;   :pin melpa-stable)
+(use-package deadgrep
   :ensure t
-  :pin melpa-stable)
+  :bind
+  (:map ska-ctrl-v-map
+	([(control d)] . deadgrep)))
+(use-package rg
+  :ensure t)
 
 (use-package company
   :ensure t
@@ -601,13 +617,16 @@ is to skip only the special buffers whose name begins with a space . "
 
 (use-package projectile
   :ensure t
+  :pin melpa-stable
   :after ivy
   :diminish projectile-mode
-  :bind
-  (:map ska-ctrl-v-map
-	([(control p)] . projectile-commander))
-  :config
-  (projectile-global-mode 1)
+  :bind (:map ska-ctrl-v-map
+              ;; commander doesn't support ripgrep, command map is
+              ;; recommended way to start but I don't really like it
+              ([(control p)] . projectile-commander)
+              ([(control ü)] . projectile-command-map))
+  :init
+  (projectile-mode +1)
   (setq projectile-completion-system 'ivy))
 
 (use-package magit
