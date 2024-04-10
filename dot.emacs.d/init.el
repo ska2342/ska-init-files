@@ -47,11 +47,13 @@
      (append
       (list
        "~/.emacs.d/lisp"
+       ;; adding for Ubuntu Emacs Snap which doesn't see site-lisp
+       "/usr/share/emacs/site-lisp/cdargs"
        )
       load-path))
 
 ;; Bootstrap `use-package'
-(setq package-enable-at-startup nil)
+;;(setq package-enable-at-startup nil)
 ;; Just expect this to be available these days.
 (require 'package)
 
@@ -63,8 +65,9 @@
 ;; configuring things here.  See
 ;; e.g. http://www.emacswiki.org/emacs/ELPA
 ;; Thus, I initialize explicitly:
-(package-initialize)
+;;(package-initialize)
 
+;; This is part of Emacs since 29 
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
@@ -597,7 +600,8 @@ is to skip only the special buffers whose name begins with a space . "
   :diminish helm-mode
   :init
   (progn
-    (require 'helm-config)
+    (if (< emacs-major-version 29)
+        (require 'helm-config))
     (global-unset-key (kbd "C-x c")))
   :bind
   (:map ska-ctrl-v-map 
@@ -624,7 +628,7 @@ is to skip only the special buffers whose name begins with a space . "
               ;; commander doesn't support ripgrep, command map is
               ;; recommended way to start but I don't really like it
               ([(control p)] . projectile-commander)
-              ([(control ü)] . projectile-command-map))
+              ([(control +)] . projectile-command-map))
   :init
   (projectile-mode +1)
   (setq projectile-completion-system 'ivy))
@@ -653,11 +657,14 @@ is to skip only the special buffers whose name begins with a space . "
         '((sequence "TODO" "|" "DONE" "CANCELED"))))
 
 
-
-(use-package linum
-  :ensure t
-  :config (global-linum-mode t))
-
+(if (>= emacs-major-version 29)
+    (use-package display-line-numbers
+      :config (global-display-line-numbers-mode t))
+  ;; transition phase loading linum on older Emacsen
+  (use-package linum
+    :ensure t
+    :config (global-linum-mode t)))
+  
 ;; (use-package docker
 ;;   :ensure t
 ;;   :pin melpa-stable
