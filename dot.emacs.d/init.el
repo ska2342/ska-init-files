@@ -57,9 +57,16 @@
 ;; Just expect this to be available these days.
 (require 'package)
 
-(dolist (pkg '(("melpa-stable" . "https://stable.melpa.org/packages/")
-               ("melpa-unstable" . "https://melpa.org/packages/")))
-  (add-to-list 'package-archives pkg))
+;; (dolist (pkg '(("melpa-stable" . "https://stable.melpa.org/packages/")
+;;                ("melpa-unstable" . "https://melpa.org/packages/")))
+;;   (add-to-list 'package-archives pkg))
+
+(setq package-archives
+      '(
+        ("melpa-unstable" . "https://melpa.org/packages/")
+        ("melpa-stable" . "https://stable.melpa.org/packages/")
+        ("gnu" . "https://elpa.gnu.org/packages/")
+        ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 
 ;; package usually loads packages after init.el; this breaks my way of
 ;; configuring things here.  See
@@ -417,6 +424,25 @@ goes back one char itself."
   ([(shift iso-lefttab)] . completion-at-point)
   ([(backtab)]           . completion-at-point))
 
+;;; New: LSP 
+(use-package lsp-mode
+  :ensure t
+  :pin melpa-stable
+  :commands (lsp lsp-deferred)
+  :config
+  (lsp-enable-which-key-integration t))
+
+(use-package lsp-ui
+  :ensure t
+  :pin melpa-stable
+  :hook (lsp-mode . lsp-ui-mode))
+
+(use-package lsp-ivy
+  :ensure t
+  :pin melpa-stable
+  :after lsp-mode)
+;;;
+
 (use-package lisp
   :bind
   ;; old XEmacs defaults deep in finger memory
@@ -592,8 +618,13 @@ is to skip only the special buffers whose name begins with a space . "
 (use-package company
   :ensure t
   :diminish company-mode
+  :after lsp-mode
   :config
   (global-company-mode 1))
+
+(use-package posframe
+  :ensure t
+  :pin gnu)
 
 (use-package helm
   :ensure t
@@ -705,6 +736,31 @@ is to skip only the special buffers whose name begins with a space . "
   (add-hook 'markdown-mode-hook
           (lambda ()
             (auto-fill-mode 1))))
+
+;; (use-package lsp-java
+;;   :ensure t
+;;   :pin melpa-stable
+;;   :hook (java-mode . lsp-deferred)
+;;   :bind (:map ska-ctrl-v-map
+;;               ([(j t)] . lsp-java-type-hierarchy)
+;;               ([(j e)] . lsp-execute-code-action))
+;;   :custom
+;;   (tab-width 4)
+;;   :init
+;;   (setq lsp-java-vmargs (list
+;;                          "-Xmx2G"
+;;                          "-XX:+UseG1GC"
+;;                          "-XX:+UseStringDeduplication"
+;;                          )
+;;         ;; lsp-java-java-path "/Library/Java/JavaVirtualMachines/temurin-11.jdk/Contents/Home/bin/java"
+;;         )
+;;   ;;(which-key-add-key-based-replacements "s-l g y" "type hierarchy")
+;;   :config
+;;   (setq c-basic-offset 4
+;;         ;; lsp-java-format-settings-url (concat "file://" (file-truename (locate-user-emacs-file "eclipse-formatter.xml"))))
+;;         )
+;;   ;; (require 'dap-java)
+;;   )
 
 (use-package yaml-mode
   :ensure t)
