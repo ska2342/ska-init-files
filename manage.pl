@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 #
 # File: manage.pl
-# Time-stamp: <2022-08-22 11:10:57 ska>
+# Time-stamp: <2025-04-22 18:48:14 ska>
 #
 # Copyright (C) 2016 by Stefan Kamphausen
 #
@@ -78,9 +78,17 @@ my %kde_settings =
    {"Windows" => [
                   ["AutoRaise",   "false"],
                   ["FocusPolicy", "FocusFollowsMouse"],
+		  ["NextFocusPrefersMouse", "true"],
+		  ["ClickRaise", "false"],
                   ["RollOverDesktops", "false"],
                   ["GeometryTip", "true"],
+		  ["ElectricBorderMaximize", "false"],
+		  ["ElectricBorderTiling", "false"],
+                  ["ElectricBorders", "1"], # move wins to next desktop
                  ],
+    "EdgeBarrier" => [
+                      ["EdgeBarrier", "0"], # mouse moves cross screens
+                     ],
     "Desktops" => [
                    ["Name_1", "1.1"],
                    ["Name_2", "1.2"],
@@ -94,34 +102,30 @@ my %kde_settings =
                    ["Number", "9"],
                    ["Rows", "3"],
                   ],
-    "ElectricBorders" => [
-                          ["Bottom",      "None"],
-                          ["BottomLeft",  "None"],
-                          ["BottomRight", "None"],
-                          ["Left",        "None"],
-                          ["Right",       "None"],
-                          ["Top",         "None"],
-                          ["TopLeft",     "None"],
-                          ["TopRight",    "None"],
-                         ],
+    "NightColor" => [
+                     ["Active", "true"]
+                    ],
+    "PLugins" => [
+	          ["slideEnabled", "false"]
+		 ],
     "ModifierOnlyShortcuts" => [["Meta", ""]],
     "MouseBindings" => [
-                        ["CommandActiveTitlebar1", "Raise"],
-                        ["CommandActiveTitlebar2", "Nothing"],
-                        ["CommandActiveTitlebar3", "Operations menu"],
-                        ["CommandAll1", "Move"],
+	    # default ["CommandActiveTitlebar1", "Raise"],
+	    # default  ["CommandActiveTitlebar2", "Nothing"],
+	    # default   ["CommandActiveTitlebar3", "Operations menu"],
+	    # default   ["CommandAll1", "Move"],
                         ["CommandAll2", "Resize"],
                         ["CommandAll3", "Toggle raise and lower"],
-                        ["CommandAllKey", "Meta"],
-                        ["CommandAllWheel", "Nothing"],
-                        ["CommandInactiveTitlebar1", "Activate and raise"],
-                        ["CommandInactiveTitlebar2", "Nothing"],
-                        ["CommandInactiveTitlebar3", "Operations menu"],
-                        ["CommandTitlebarWheel", "Nothing"],
-                        ["CommandWindow1", "Activate, raise and pass click"],
-                        ["CommandWindow2", "Activate and pass click"],
-                        ["CommandWindow3", "Activate and pass click"],
-                        ["CommandWindowWheel", "Scroll"],
+	    # default   ["CommandAllKey", "Meta"],
+	    # defailt   ["CommandAllWheel", "Nothing"],
+	    # default   ["CommandInactiveTitlebar1", "Activate and raise"],
+	    # default   ["CommandInactiveTitlebar2", "Nothing"],
+	    # default   ["CommandInactiveTitlebar3", "Operations menu"],
+	    # default   ["CommandTitlebarWheel", "Nothing"],
+                        ["CommandWindow1", "Activate and pass click"],
+	    # default   ["CommandWindow2", "Activate and pass click"],
+	    # default   ["CommandWindow3", "Activate and pass click"],
+	    # default   ["CommandWindowWheel", "Scroll"],
                        ],
    },
    "plasmarc" =>
@@ -129,6 +133,14 @@ my %kde_settings =
     "Theme" => [["name", "breeze-dark"]],
     "Wallpapers" => [["usersWallpapers", "/home/ska/etc/desktop/WS2.JPG"]]
    },
+   "konsolerc" =>
+   {
+    "General" => [["ConfigVersion", "1"]],
+    "KonsoleWindow" => [
+                        ["RememberWindowSize", "false"],
+                        ["ShowWindowTitleOnTitleBar", "true"]
+                       ]
+   }
    );
 
 my $home = $ENV{HOME};
