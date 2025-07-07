@@ -268,7 +268,7 @@ arguments looks into the CLIPBOARD."
 (defun ska-kill-this-window ()
   "Kill buffer in current window and delete window after that."
   (interactive)
-  (kill-this-buffer)
+  (kill-current-buffer)
   (delete-window))
 
 ;; aehnliches fuer switch-to-buffer:
@@ -363,10 +363,10 @@ goes back one char itself."
 
 (use-package menu-bar
   :bind
-  (([(f4)] . kill-this-buffer)
+  (([(f4)] . kill-current-buffer)
    ([(control f4)] . ska-kill-this-window)
    :map ska-ctrl-v-map
-   ([(control k)] . kill-this-buffer)
+   ([(control k)] . kill-current-buffer)
    ([(k)]         . ska-kill-this-window)))
 
 (use-package simple
