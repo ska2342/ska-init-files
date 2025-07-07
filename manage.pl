@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 #
 # File: manage.pl
-# Time-stamp: <2025-04-22 18:48:14 ska>
+# Time-stamp: <2025-07-07 12:03:20 ska>
 #
 # Copyright (C) 2016 by Stefan Kamphausen
 #
@@ -72,6 +72,18 @@ my %files =
    "bash/dot.color-man"              => ".color-man",
    "dot.screenrc"                    => ".screenrc"
   );
+
+# So, here's a KDE Setting I need for my self-built trackball device
+# that doesn't fit into this framework:
+# in ~/.config/kcminputrc
+# 
+# [Libinput][1922][1][Cursor Controls Ltd Cursor Controls Trackball]
+# ScrollMethod=4
+#
+# Find it in systemsettings -> mouse and touchpad -> mouse -> select
+# the right device -> there's a toggle button to enable scrolling
+# while holding the middle nouse button (which funny enough is what I
+# came up with around 2010-ish for X)
 
 my %kde_settings =
   ("kwinrc" =>
