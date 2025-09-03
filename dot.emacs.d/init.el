@@ -387,6 +387,10 @@ goes back one char itself."
   :config
   (setq require-final-newline nil))
 
+(use-package pixel-scroll
+  :config
+  (pixel-scroll-precision-mode))
+
 (use-package align
   :bind
   (:map ska-ctrl-v-map
