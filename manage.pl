@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 #
 # File: manage.pl
-# Time-stamp: <2025-07-07 12:03:20 ska>
+# Time-stamp: <2025-09-29 20:10:05 ska>
 #
 # Copyright (C) 2016 by Stefan Kamphausen
 #
@@ -70,7 +70,8 @@ my %files =
    "bash/dot.bash_ska"               => ".bash_ska",
    "bash/dot.bash_aliases"           => ".bash_aliases",
    "bash/dot.color-man"              => ".color-man",
-   "dot.screenrc"                    => ".screenrc"
+   "dot.screenrc"                    => ".screenrc",
+   "bin/osupdate.sh"                 => "local/bin/osupdate.sh"
   );
 
 # So, here's a KDE Setting I need for my self-built trackball device
