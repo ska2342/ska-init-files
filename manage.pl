@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 #
 # File: manage.pl
-# Time-stamp: <2025-09-29 20:10:05 ska>
+# Time-stamp: <2025-10-01 12:14:23 ska>
 #
 # Copyright (C) 2016 by Stefan Kamphausen
 #
@@ -67,6 +67,7 @@ my %files =
    "dot.emacs.d/lisp/active-menu.el" => ".emacs.d/lisp/active-menu.el",
    "dot.emacs.d/lisp/linmag-mode.el" => ".emacs.d/lisp/linmag-mode.el",
    "dot.emacs.d/lisp/mtorus.el"      => ".emacs.d/lisp/mtorus.el",
+   "dot.emacs.d/lisp/ll-debug.el"    => ".emacs.d/lisp/ll-debug.el",
    "bash/dot.bash_ska"               => ".bash_ska",
    "bash/dot.bash_aliases"           => ".bash_aliases",
    "bash/dot.color-man"              => ".color-man",
