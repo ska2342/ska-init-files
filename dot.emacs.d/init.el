@@ -664,6 +664,12 @@ is to skip only the special buffers whose name begins with a space . "
   :config
   (global-company-mode 1))
 
+(use-package graphviz-dot-mode
+  ;; Note that compile-command is computed when the mode is
+  ;; invoked. Can't customize to change an already open buffer. 
+  :config
+  (setq graphviz-dot-preview-extension "pdf"))
+
 (use-package posframe
   :ensure t
   :pin gnu)
