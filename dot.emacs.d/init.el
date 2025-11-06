@@ -345,10 +345,41 @@ goes back one char itself."
   :config
   (modus-themes-load-theme 'modus-vivendi))
 
-(use-package mood-line
-  :ensure t
-  :hook (after-init . mood-line-mode))
+;; (use-package mood-line
+;;   :ensure t
+;;   :hook (after-init . mood-line-mode))
 
+;; not sure what I want here. Unnecessary hard to debug: not interactive
+;; (setq telephone-line-lhs
+;;       '((evil  . (telephone-line-buffer-segment))
+;;         (accent . (telephone-line-projectile-segment
+;;                    telephone-line-vc-segment
+;;                    ))
+;;         (nil    . (telephone-line-process-segment
+;;                    telephone-line-minor-mode-segment))))
+;; (setq telephone-line-rhs
+;;       '((nil    . (telephone-line-misc-info-segment))
+;;         (accent . (telephone-line-major-mode-segment))
+;;         (evil   . (telephone-line-airline-position-segment))))
+;; Inspiration: https://github.com/myTerminal/super-emacs/blob/master/.emacs.d/configs/standard-02-packages.el
+;; (setq telephone-line-lhs '((evil   . (telephone-line-hud-segment
+;;                                       telephone-line-position-segment))
+;;                            (accent . (telephone-line-buffer-modified-segment
+;;                                       telephone-line-vc-segment
+;;                                       telephone-line-buffer-name-segment
+;;                                       telephone-line-perspective-segment))
+;;                            (nil    . (telephone-line-minor-mode-segment)))
+;;       telephone-line-rhs '((nil    . (telephone-line-process-segment
+;;                                       telephone-line-projectile-segment
+;;                                       telephone-line-erc-modified-channels-segment))
+;;                            (accent . (telephone-line-major-mode-segment))
+;;                            (evil   . (telephone-line-atom-eol-segment
+;;                                       telephone-line-atom-encoding-segment
+;;                                       telephone-line-filesize-segment))))
+
+(use-package telephone-line
+  :ensure t
+  :hook (after-init . telephone-line-mode))
 
 ;;; Built-in packages you usually don't even care about requiring.
 (use-package saveplace
