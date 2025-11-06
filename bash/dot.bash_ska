@@ -48,7 +48,6 @@ function add_to_path {
 
 add_to_path "$HOME/local/bin"
 
-
 # cdargs
 if [ -f /usr/share/doc/cdargs/examples/cdargs-bash.sh ]; then
 	. /usr/share/doc/cdargs/examples/cdargs-bash.sh
@@ -63,6 +62,11 @@ test -f ~/.color-man && . ~/.color-man
 # load aliases for remote connections
 if [ -f ~/.remote-connections ]; then
     . ~/.remote-connections
+fi
+
+# load aliases for remote connections
+if [ -f ~/.bash_local ]; then
+    . ~/.bash_local
 fi
 
 # export NVM_DIR="$HOME/.nvm"
