@@ -458,6 +458,10 @@ goes back one char itself."
 	([(control y)] . ska-insert-x-selection)))
 
 (use-package dabbrev
+  :init
+  ;; Might need this since using PGTK version of Emacs: Otherwise
+  ;; S-SPC seems to get translated to just SPC.
+  (pgtk-use-im-context nil)  
   :bind
   ("S-SPC" . dabbrev-expand))
 
