@@ -319,11 +319,6 @@ goes back one char itself."
   :ensure t
   :config (key-chord-mode 1))
 
-;; (use-package darktooth-theme
-;;   :ensure t
-;;   :config
-;;   (load-theme 'darktooth t)
-;;   (darktooth-modeline))
 ;; I seem to like nimbus because the contrast is better than darktooth
 ;;   for my eyes. I just can't see buffer boundaries so would have to
 ;;   either set the mode-line faces directly or try if powerline works
@@ -332,11 +327,23 @@ goes back one char itself."
 ;;   :ensure t
 ;;   :config
 ;;   (powerline-default-theme))
-(use-package nimbus-theme
+;; (use-package nimbus-theme
+;;   :ensure t
+;;   :config
+;;   (copy-face 'mode-line 'mode-line-inactive)
+;;   (load-theme 'nimbus t))
+;; As of 2025 Oct, I'm trying out the built-in modus themes
+(use-package modus-themes
+  ;; theme dir is not on load-path. Will just download latest instead of using built-in. 
   :ensure t
+  :init
+  ;; I want a clearly visible modeline as a window divider:
+  (setq modus-themes-common-palette-overrides
+        '((bg-mode-line-active bg-blue-subtle)
+          (fg-mode-line-active fg-main)
+          (border-mode-line-active blue-intense)))
   :config
-  (copy-face 'mode-line 'mode-line-inactive)
-  (load-theme 'nimbus t))
+  (modus-themes-load-theme 'modus-vivendi))
 
 (use-package mood-line
   :ensure t
