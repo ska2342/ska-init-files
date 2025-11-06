@@ -458,10 +458,11 @@ goes back one char itself."
 	([(control y)] . ska-insert-x-selection)))
 
 (use-package dabbrev
+  ;; I need this for the PGTK version of Emacs to allow S-SPC. See
+  ;; https://www.reddit.com/r/emacs/comments/osscfd/pgtk_emacswaylandgnome_no_shiftspace/
   :init
-  ;; Might need this since using PGTK version of Emacs: Otherwise
-  ;; S-SPC seems to get translated to just SPC.
-  (pgtk-use-im-context nil)  
+  (setq pgtk-use-im-context-on-new-connection nil)
+  ;; this only works after Emacs started: (pgtk-use-im-context nil)
   :bind
   ("S-SPC" . dabbrev-expand))
 
@@ -664,7 +665,7 @@ is to skip only the special buffers whose name begins with a space . "
 (use-package company
   :ensure t
   :diminish company-mode
-  :after lsp-mode
+;;  :after lsp-mode
   :config
   (global-company-mode 1))
 
