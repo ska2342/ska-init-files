@@ -977,6 +977,13 @@ is to skip only the special buffers whose name begins with a space . "
 		    nxml-slash-auto-complete-flag t)
 	      (flyspell-mode 1))))
 
+;; Can't get this to work with use-package. If I want to use it, load it manually...
+;; Clone repo, see file emacs/focheck.el and README of repo
+;; (use-package focheck
+;;   :ensure t
+;;   :vc (focheck :url "https://github.com/AntennaHouse/focheck.git"
+;;                :lisp-dir "emacs/"))
+
 (use-package tex
   :ensure auctex
   :init
