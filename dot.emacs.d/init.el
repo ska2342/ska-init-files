@@ -315,6 +315,8 @@ goes back one char itself."
 
 
 ;; First loading packages that add functions to use-package itself.
+;; Not sure I still need this. It's deprecated and contained in
+;; use-package itself but with a slightly older version.
 (use-package use-package-chords
   :ensure t
   :config (key-chord-mode 1))
@@ -723,7 +725,9 @@ is to skip only the special buffers whose name begins with a space . "
 (use-package magit
   :ensure t
   :chords (("GG" . magit-status)
-           ("FF" . magit-file-dispatch))
+           ;; don't need and sometimes conflict
+           ;; ("FF" . magit-file-dispatch)
+           )
   ;; :bind
   ;; (:map ska-ctrl-v-map 
   ;;       ([(g)] . magit-status))
@@ -835,7 +839,8 @@ is to skip only the special buffers whose name begins with a space . "
 
 (use-package lisp-mode
   :chords
-  (("jj" . "("))
+  (:map lisp-mode-shared-map
+        ("jj" . "("))
   :config
   (auto-fill-mode 1))
 
@@ -844,9 +849,10 @@ is to skip only the special buffers whose name begins with a space . "
   :pin melpa-stable
   :after subword
   :chords
-  (("jj" . "(")
-   ("JJ" . "[")
-   ("BB" . "{"))
+  (:map clojure-mode-map
+        ("jj" . "(")
+        ("JJ" . "[")
+        ("BB" . "{"))
   :config
   (add-to-list 'auto-mode-alist '("\\.boot$"  . clojure-mode))
   (add-to-list 'magic-mode-alist '(".* boot" . clojure-mode))
@@ -877,6 +883,7 @@ is to skip only the special buffers whose name begins with a space . "
   (add-hook 'cider-repl-mode-hook
             (lambda ()
               (setq cider-repl-use-clojure-font-lock t))))
+
 
 (use-package cider-mode
   :ensure cider
