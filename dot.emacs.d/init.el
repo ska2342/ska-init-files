@@ -471,6 +471,9 @@ goes back one char itself."
   ([(shift iso-lefttab)] . completion-at-point)
   ([(backtab)]           . completion-at-point))
 
+(use-package eldoc-box
+  :ensure t)
+
 ;;; New: LSP 
 (use-package lsp-mode
   :ensure t
