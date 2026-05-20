@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 #
 # File: manage.pl
-# Time-stamp: <2025-10-01 12:14:23 ska>
+# Time-stamp: <2026-05-20 12:10:46 ska>
 #
 # Copyright (C) 2016 by Stefan Kamphausen
 #
@@ -90,11 +90,11 @@ my %files =
 my %kde_settings =
   ("kwinrc" =>
    {"Windows" => [
-                  ["AutoRaise",   "false"],
+                  # default since 6.6? ["AutoRaise",   "false"],
                   ["FocusPolicy", "FocusFollowsMouse"],
 		  ["NextFocusPrefersMouse", "true"],
-		  ["ClickRaise", "false"],
-                  ["RollOverDesktops", "false"],
+		  # default since 6.6? ["ClickRaise", "false"],
+                  # default since 6.6? ["RollOverDesktops", "false"],
                   ["GeometryTip", "true"],
 		  ["ElectricBorderMaximize", "false"],
 		  ["ElectricBorderTiling", "false"],
@@ -102,6 +102,7 @@ my %kde_settings =
                  ],
     "EdgeBarrier" => [
                       ["EdgeBarrier", "0"], # mouse moves cross screens
+                      ["CornerBarrier", "false"], 
                      ],
     "Desktops" => [
                    ["Name_1", "1.1"],
@@ -117,7 +118,8 @@ my %kde_settings =
                    ["Rows", "3"],
                   ],
     "NightColor" => [
-                     ["Active", "true"]
+                     ["Active", "true"],
+                     ["Mode", "DarkLight"]
                     ],
     "PLugins" => [
 	          ["slideEnabled", "false"]
