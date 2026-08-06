@@ -462,16 +462,32 @@ goes back one char itself."
 (use-package dabbrev
   ;; I need this for the PGTK version of Emacs to allow S-SPC. See
   ;; https://www.reddit.com/r/emacs/comments/osscfd/pgtk_emacswaylandgnome_no_shiftspace/
+  ;; Oh, and this then breaks all dead keys. See
+  ;; https://lists.gnu.org/archive/html/bug-gnu-emacs/2021-12/msg01914.html
   :init
   (setq pgtk-use-im-context-on-new-connection nil)
+  ;; (Temporarily) adding something that allows me to quickly toggle the behavior
+  (defun ska-toggle-shift-space-deadkeys ()
+    (interactive)
+    (setq pgtk-use-im-context-on-new-connection
+          (not pgtk-use-im-context-on-new-connection))
+    (pgtk-use-im-context pgtk-use-im-context-on-new-connection)
+    (message "S-SPC or dead keys: %s"
+             (if pgtk-use-im-context-on-new-connection
+                 "dead keys" "S-SPC")))
+
   ;; this only works after Emacs started: (pgtk-use-im-context nil)
   :bind
-  ("S-SPC" . dabbrev-expand))
+  ("S-SPC" . dabbrev-expand)
+  (:map ska-ctrl-v-map	(["SPC"] . ska-toggle-shift-space-deadkeys)))
 
 (use-package minibuffer
-  :bind
-  ([(shift iso-lefttab)] . completion-at-point)
-  ([(backtab)]           . completion-at-point))
+  ;; Not sure if I need this anymore. Conflicts with global cycling in
+  ;; ORG (2026-01-12)
+  ;; :bind
+  ;; ([(shift iso-lefttab)] . completion-at-point)
+  ;; ([(backtab)]           . completion-at-point)
+  )
 
 (use-package eldoc-box
   :ensure t)
@@ -745,7 +761,10 @@ is to skip only the special buffers whose name begins with a space . "
   :config
   (add-hook 'org-mode-hook #'auto-fill-mode)
   (setq org-todo-keywords
-        '((sequence "TODO" "|" "DONE" "CANCELED"))))
+        '((sequence "TODO" "|" "DONE" "CANCELED")))
+  :bind
+  (([shift iso-lefttab]  . org-shifttab))
+)
 
 
 (if (>= emacs-major-version 29)
@@ -778,6 +797,12 @@ is to skip only the special buffers whose name begins with a space . "
 
 (use-package smartparens
   :ensure t
+  ;; not sure where to put this. Since being more specific which maps
+  ;; should use my parens chords, cider-repl-mode doesn't have it
+  ;; anymore and I couldn't get it back in the cider config. Just
+  ;; adding it globally here b/c I don't feel like figuring it out
+  ;; right now.
+  :chords (("jj" . "("))
   :config (smartparens-global-mode 1))
 
 
