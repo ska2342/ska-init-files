@@ -49,7 +49,8 @@ alias lsr='ls -lSr'
 # only dirs
 alias lsd='for i in *; do if [ -d "$i" ]; then ls -d "$i"; fi; done'
 alias llsd='for i in *; do if [ -d "$i" ]; then ls -dl $i; fi; done'
-
+# special dirs
+alias ldr='cd ~ && cd Downloads && ltr'
 
 # view/edit/search files
 alias m='less'
@@ -217,6 +218,7 @@ function rolldice() {
     echo $((1 + $RANDOM % 6)) ;
 }
 
+alias ht='htop'
 #alias hiddentop='wterm -T hidden +sb -tr -fg "#cecece" -bg "#334577" -e top&'
 # alias hiddentop='urxvt -T hidden +sb -tr -fg "#9e9e9e" -bg "#336577" -geometry +796+0 -e top&'
 # alias sm='/usr/sbin/sendmail -v -q'
