@@ -724,7 +724,18 @@ is to skip only the special buffers whose name begins with a space . "
   :config
   (which-key-mode 1))
 
-(use-package projectile
+(use-package bufferfile
+  :ensure t
+  :commands (bufferfile-copy
+             bufferfile-rename
+             bufferfile-delete)
+  :config
+  (setq bufferfile-delete-switch-to nil)
+  :bind
+  (:map ska-ctrl-v-map
+	([(d)] . bufferfile-delete)))
+
+  (use-package projectile
   :ensure t
   :pin melpa-stable
   :after ivy
