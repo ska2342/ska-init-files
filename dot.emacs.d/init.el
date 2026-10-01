@@ -743,8 +743,7 @@ is to skip only the special buffers whose name begins with a space . "
   :bind (:map ska-ctrl-v-map
               ;; commander doesn't support ripgrep, command map is
               ;; recommended way to start but I don't really like it
-              ([(control p)] . projectile-commander)
-              ([(control +)] . projectile-command-map))
+              ([(control p)] . projectile-command-map))
   :init
   (projectile-mode +1)
   (setq projectile-completion-system 'ivy))
